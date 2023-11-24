@@ -22,6 +22,24 @@ contract FactChecking {
     }
 
 
+    // enum
+
+    // Array
+
+    // mapping
+
+    // event
+    // article publiched
+    // document published
+    
+
+    // constructor
+
+    // Modifier
+
+    // function
+
+
 
 
 
