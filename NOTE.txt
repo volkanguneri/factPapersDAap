@@ -1,0 +1,116 @@
+// SPDX-License-Identifier: MIT
+
+pragma solidity 0.8.22;
+
+
+function canVote(address member) public view returns (bool) {
+        return isMember(member) && block.timestamp - members[member].firstParticipationDate >= 12 * 30 days;
+    }
+
+    function conductVote(uint256[] calldata votes, uint256 changeThreshold, uint256 newValue) external onlyMember returns (bool) {
+        require(votes.length >= PARTICIPANT_THRESHOLD, "Not enough participants for the vote");
+        
+        uint256 totalVotes = 0;
+        for (uint256 i = 0; i < votes.length; i++) {
+            if (canVote(address(i))) {
+                totalVotes += votes[i];
+            }
+        }
+
+        if (totalVotes >= changeThreshold) {
+            // Execute the change
+            // For simplicity, this contract assumes a simple boolean state change.
+            // You would need to adapt this part based on your actual voting mechanism.
+            // newValue represents the new boolean state after the vote.
+            // For example, if newValue is 1, it means "true", and if newValue is 0, it means "false".
+            // You might need to change this logic based on your specific use case.
+            return newValue == 1;
+        }
+
+        return false;
+    }
+
+
+
+    // SPDX-License-Identifier: MIT
+
+pragma solidity 0.8.22;
+
+contract FactChecking {
+
+    // Variables 
+
+    struct writer {
+        address,
+ 
+    }
+
+    struct document {
+        address,
+
+    }
+
+    struct checker {
+        address,
+
+    }
+
+
+    // enum
+
+    // Array
+
+    // mapping
+
+    // event
+    // article publiched
+    // document published
+    
+
+    // constructor
+
+    // Modifier
+
+    // function
+
+
+
+
+
+}
+
+
+// SUBMITSxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    
+    // Reader reports
+    function submitReaderReport(address report, bool isVerifier) external onlyReader {
+        
+        reports[msg.sender][report]++;
+        emit ReportSubmitted(msg.sender, subject, isVerifier);
+
+        if (isVerifier && reports[msg.sender][subject] >= reportNumToBeVerifier) {
+            promoteToVerifier(msg.sender);
+        }
+    }
+
+    // Verifier reports
+    function submitVerifierReport(address report, bool isVerifier) external onlyVerifier {
+        
+        reports[msg.sender][report]++;
+        emit ReportSubmitted(msg.sender, subject, isVerifier);
+
+        if (isVerifier && reports[msg.sender][subject] >= reportNumToBeVerifier) {
+            promoteToVerifier(msg.sender);
+        }
+    }
+
+    // Author reports
+    function submitArticle(address report, bool isVerifier) external onlyAuthor {
+        
+        reports[msg.sender][report]++;
+        emit ReportSubmitted(msg.sender, subject, isVerifier);
+
+        if (isVerifier && reports[msg.sender][subject] >= reportNumToBeVerifier) {
+            PromotedToVerifier(msg.sender);
+        }
+    }
