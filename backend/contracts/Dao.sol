@@ -8,6 +8,8 @@ contract DAO {
     address public owner;
     uint256 requiredReportsForVerifierPromotion = 10;
     uint256 requiredVerificationsForAuthorPromotion  = 20;
+    uint256 timeIntervalForVerifierPromotion = 6 * 30 days;
+    uint256 timeIntervalForAuthorPromotion = 12 * 30 days;
 
     struct Author {
         bool isAuthor;
@@ -20,7 +22,7 @@ contract DAO {
         uint256 totalVerificationDoneNumber;
     }
 
-    struct Reader {
+    struct registeredReader {
         bool isReader;
         uint256 firstReportDate;
         uint256 totalReportNumber;
@@ -29,7 +31,7 @@ contract DAO {
     struct Donator {
         bool isDonator;
         uint256 donateAmount;
-        uint256 donateDate;
+        uint256[] donateDates;
     }
     
 
@@ -48,8 +50,13 @@ contract DAO {
     event AuthorCreated(address indexed author, bool isAuthor, uint256 date);
     event VerifierCreated(address indexed verifier, bool isVerier, uint256 date);
     event HasDonated(address indexed donator, bool isDonator, uint256 donateAmount, uint256 donateDate);
-    // event ReportSubmitted(address indexed reporter, address indexed subject, bool isVerifier);
-    // event RolePromotion(address indexed member, bool isAuthor, bool isVerifier);
+    event ArticlePublished(address xxx);
+    event ArticleVerified(address xxx);
+    event ReportSubmitted(address xxx);
+    event PromotedToAuthor(address _reader, uint256 _time);
+    event PromotedToVerifier(address _verifier, uint256 _time);
+    event MemberBanned(address xxx);
+
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Only owner can call this function");
@@ -75,23 +82,46 @@ contract DAO {
         owner = msg.sender;
     }
 
-    // Initial DAO commuty selection
+
+    // Initial DAO commuty selection ?
 
 
 
     // Whitelisted members
-    function createAuthor(address member, bool isAuthor, bool isVerifier) external onlyOwner {
-        require(!authors[msg.sender].isRegistered, "Author's already whitelisted");
-        authors[msg.sender] = Author(isAuthor, 0);
+    function createAuthor(address author, bool isAuthor, bool isVerifier) external onlyOwner {
+        // require(!authors[msg.sender], "Author's already whitelisted");
+        authors[author] = Author(isAuthor, 0);
         emit AuthorCreated(msg.sender, true, block.timestamp);
     }
-    function createVerifier(address member, bool isAuthor, bool isVerifier) external onlyOwner {
-        require(!verifiers(msg.sender), "Verifier's already whitelisted");
-        verifiers[msg.sender] = Verifier(isVerifier, 0);
+    function createVerifier(address verifier, bool isAuthor, bool isVerifier) external onlyOwner {
+        // require(!verifiers(msg.sender), "Verifier's already whitelisted");
+        verifiers[verifier] = Verifier(verifier, isVerifier, 0);
         emit VerifierCreated(msg.sender, true, block.timestamp);
     }
 
     // Promotion functions
+
+    // Promoted to verifier
+    function fromReaderToVerifier() external {
+        require(registeredReader[msg.sender].totalReportNumber >= requiredReportsForVerifierPromotion, "Not enough reports for verifier promotion");
+        require(registeredReader[msg.sender].firstReportDate > timeIntervalForVerifierPromotion, "Not eligible for verifier promotion yet");
+        verifiers[msg.sender].isVerifier = true;
+        verifiers[msg.sender] = Verifier(msg.sender, isVerifier, 0);
+        
+        emit PromotedToVerifier(msg.sender, block.timestamp);
+    }
+
+    // Promoted to author
+    function fromVerifierToAuthor() external onlyVerifier {
+        require(verifiers[msg.sender].totalVerificationDoneNumber >= requiredVerificationsForAuthorPromotion, "Not enough verifications for author promotion");
+        require(registeredReader[msg.sender].firstReportDate > timeIntervalForAuthorPromotion,"Not eligible for author promotion yet" );
+        verifiers[msg.sender].isVerifier = false;
+        authors[msg.sender] = Author(msg.sender, isVerifier, 0);
+
+        emit PromotedToAuthor(msg.sender, block.timestamp);
+
+    }
+
     // function promotVerifier()
 
     // DAO can change some variables by voting of majority
