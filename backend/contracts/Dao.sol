@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: MIT
 
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
+
 pragma solidity 0.8.22;
 
 
-contract Dao {
+contract Dao is Ownable {
 
-    address public owner;
+    // DAO rules for promotion that the elligible community can change values by voting
+
     uint256 requiredReportsForVerifierPromotion = 10;
     uint256 requiredVerificationsForAuthorPromotion  = 20;
     uint256 timeIntervalForVerifierPromotion = 6 * 30 days;
@@ -16,11 +19,15 @@ contract Dao {
 
     struct Author {
         bool isAuthor;
+        bool isRegistered;
+        bool hasVoted;
         uint256 firstParticipationDate;
     }
 
     struct Verifier {
         bool isVerifier;
+        bool isRegistered;
+        bool hasVoted;
         uint256 firstParticipationDate;
         uint256 totalVerificationDoneNumber;
     }
@@ -37,7 +44,7 @@ contract Dao {
         uint256[] donateDates;
     }
 
-    
+   
     // Mappings
 
     mapping(address => Author) public authors;
@@ -46,8 +53,9 @@ contract Dao {
     mapping(address => Donator) public donators;
 
 
-    address[] public articles;
+    string[] public articlesCID;
     address[] public reports;
+    address[] public articles;
 
 
     // Events
@@ -55,7 +63,7 @@ contract Dao {
     event AuthorCreated(address indexed author, bool isAuthor, uint256 date);
     event VerifierCreated(address indexed verifier, bool isVerier, uint256 date);
     event HasDonated(address indexed donator, bool isDonator, uint256 donateAmount, uint256 donateDate);
-    event ArticlePublished(address xxx);
+    event ArticlePublished(string _CID);
     event ArticleVerified(address xxx);
     event ReportSubmitted(address xxx);
     event PromotedToAuthor(address _reader, uint256 _time);
@@ -67,10 +75,9 @@ contract Dao {
 
 
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only owner can call this function");
-        _;
-    }
+    constructor() Ownable(msg.sender) {}
+
+
 
     modifier onlyAuthor() {
         require(authors[msg.sender].isAuthor, "Only authors can access!");
@@ -86,12 +93,6 @@ contract Dao {
     modifier onlyVerifier() {
         require(verifiers[msg.sender].isVerifier, "Only verifier can access!");
         _;
-    }
-
-  
-
-    constructor() {
-        owner = msg.sender;
     }
 
 
@@ -139,26 +140,6 @@ contract Dao {
         emit AuthorBanned(_author);
     }
 
-
-    // DAO can change some variables by voting of majority
-
-    function setTotalReportNumber(uint256 newThresold) external {
-        requiredReportsForVerifierPromotion = newThresold;
-    }
-
-    function setTotalVerificationNumber(uint256 newThreshold) external {
-        requiredVerificationsForAuthorPromotion = newThreshold;
-    }
-    function setTimeIntervalForVerifierPromotion (uint256 newInterval) external {
-        timeIntervalForVerifierPromotion  = newInterval;
-    }
-
-    function settimeIntervalForAuthorPromotion(uint256  newInterval) external {
-        timeIntervalForAuthorPromotion =  newInterval;
-    }
-
-
-
-
+    
 }
 

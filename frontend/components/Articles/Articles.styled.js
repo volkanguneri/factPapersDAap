@@ -1,4 +1,9 @@
 "use client";
 import styled from "styled-components";
 
-export const StyledHeader = styled.main``;
+export const StyledForm = styled.form`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: red;
+`;

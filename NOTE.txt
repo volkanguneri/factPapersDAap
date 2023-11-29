@@ -114,3 +114,53 @@ contract FactChecking {
             PromotedToVerifier(msg.sender);
         }
     }
+
+
+     // SPDX-License-Identifier: MIT
+ pragma solidity >=0.4.22 <0.9.0;
+
+ contract Articles {
+ struct Article {
+   string title;
+   string cid;
+ }
+
+ mapping(string => Article) public articles;
+
+ function publishArticle(string memory title, string memory cid) public {
+   articles[cid] = Article(title, cid);
+ }
+ }
+
+
+import { useWagmi } from 'wagmi';
+ import pinataSDK from '@pinata/sdk';
+
+ const { account, library, chainId, provider } = useWagmi();
+ const pinata = pinataSDK('yourPinataJWTKey');
+
+ const metadata = {
+ title: 'Mon titre',
+ content: 'Mon contenu',
+ };
+ const result = await pinata.pinJSONToIPFS(metadata);
+ const cid = result.IpfsHash;
+
+ const contract = new library.eth.Contract(abi, contractAddress);
+ const tx = contract.methods.publishArticle('Mon titre', cid);
+ const gas = await tx.estimateGas({ from: account });
+ const data = tx.encodeABI();
+ const txData = {
+ to: contractAddress,
+ data,
+ gas,
+ };
+ const signedTx = await provider.signTransaction(txData);
+ const receipt = await provider.sendTransaction(signedTx);
+ console.log(receipt);
+
+
+  uint256 requiredReportsForVerifierPromotion = 10;
+    uint256 requiredVerificationsForAuthorPromotion  = 20;
+    uint256 timeIntervalForVerifierPromotion = 6 * 30 days;
+    uint256 timeIntervalForAuthorPromotion = 12 * 30 days;
