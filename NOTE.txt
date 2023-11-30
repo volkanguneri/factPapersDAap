@@ -164,3 +164,15 @@ import { useWagmi } from 'wagmi';
     uint256 requiredVerificationsForAuthorPromotion  = 20;
     uint256 timeIntervalForVerifierPromotion = 6 * 30 days;
     uint256 timeIntervalForAuthorPromotion = 12 * 30 days;
+
+
+     // if (workflowChangeTime >= 1 weeks) {
+        //     votingStart()
+        // }
+            console.log(workflowChangeTime);
+
+              if (old.workflowChangeTime >= 7 * days) {
+        workflowStatus = WorkflowStatus(_num++);
+        }
+        emit WorkflowStatusChange(old_WorkflowStatus, workflowStatus);
+       } 

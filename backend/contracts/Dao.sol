@@ -1,33 +1,32 @@
 // SPDX-License-Identifier: MIT
 
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
+import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 
-pragma solidity 0.8.22;
+pragma solidity ^0.8.22;
 
 
 contract Dao is Ownable {
 
     // DAO rules for promotion that the elligible community can change values by voting
 
-    uint256 requiredReportsForVerifierPromotion = 10;
-    uint256 requiredVerificationsForAuthorPromotion  = 20;
-    uint256 timeIntervalForVerifierPromotion = 6 * 30 days;
-    uint256 timeIntervalForAuthorPromotion = 12 * 30 days;
+    uint256 public requiredReportsForVerifierPromotion;
+    uint256 public requiredVerificationsForAuthorPromotion;
+    uint256 public timeIntervalForVerifierPromotion;
+    uint256 public timeIntervalForAuthorPromotion;
+
+    uint public numberOfAuthors;
+    uint public numberOfVerifiers;
     
 
     // DAO roles
 
     struct Author {
         bool isAuthor;
-        bool isRegistered;
-        bool hasVoted;
         uint256 firstParticipationDate;
     }
 
     struct Verifier {
         bool isVerifier;
-        bool isRegistered;
-        bool hasVoted;
         uint256 firstParticipationDate;
         uint256 totalVerificationDoneNumber;
     }
@@ -52,6 +51,8 @@ contract Dao is Ownable {
     mapping(address => RegisteredReader) public readers;
     mapping(address => Donator) public donators;
 
+    // Author[] public authors;
+    // Verifier[] public verifiers;
 
     string[] public articlesCID;
     address[] public reports;
@@ -75,7 +76,12 @@ contract Dao is Ownable {
 
 
 
-    constructor() Ownable(msg.sender) {}
+    constructor() Ownable(msg.sender) {
+        requiredReportsForVerifierPromotion = 10;
+        requiredVerificationsForAuthorPromotion  = 20;
+        timeIntervalForVerifierPromotion = 6 * 30 * 24 * 60 * 60; // 12 months in seconds
+        timeIntervalForAuthorPromotion = 12 * 30 * 24 * 60 * 60; // 12 months in seconds
+    }
 
 
 
@@ -102,13 +108,16 @@ contract Dao is Ownable {
 
     // Whitelisted members
     function createAuthor(address author) external onlyOwner {
-        // require(!authors[msg.sender], "Author's already whitelisted");
+        require(!authors[author].isAuthor, "Author already exists");
         authors[author] = Author(true, 0);
+        numberOfAuthors++;
         emit AuthorCreated(msg.sender, true, block.timestamp);
     }
+
     function createVerifier(address verifier) external onlyOwner {
-        // require(!verifiers(msg.sender), "Verifier's already whitelisted");
+        require(!verifiers[verifier].isVerifier, "Verifier already exists");
         verifiers[verifier] = Verifier(true, block.timestamp, 0);
+        numberOfVerifiers++;
         emit VerifierCreated(msg.sender, true, block.timestamp);
     }
 
@@ -137,6 +146,7 @@ contract Dao is Ownable {
     // To ban author
     function banAuthor(address _author) external {
         authors[msg.sender].isAuthor = false; 
+        numberOfAuthors--;
         emit AuthorBanned(_author);
     }
 

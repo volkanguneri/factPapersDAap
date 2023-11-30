@@ -18,6 +18,9 @@ const Menu = () => {
         <li>
           <StyledLinks href="#">Objection</StyledLinks>
         </li>
+        <li>
+          <StyledLinks href="#">Voting</StyledLinks>
+        </li>
       </ul>
     </StyledNavbar>
   );
