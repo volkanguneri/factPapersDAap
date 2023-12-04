@@ -8,6 +8,7 @@ contract Voting is Dao {
 
     struct Voter {
         bool isRegistered;
+        bool hasProposed;
         bool hasVoted;
         uint votedProposalId;
     }
@@ -134,21 +135,28 @@ contract Voting is Dao {
     //     emit VoterBanned(_addr);
     // }
 
-    function registerProposal(uint _num) external onlyVoters {
-        require(workflowStatus == WorkflowStatus.RegisteringProposals, "Proposals' registration session is not open");
-        
-        Proposal memory newProposal;
-        newProposal.num = _num;
+    function registerProposal(uint256 _num) external onlyVoters {
+        require(workflowStatus == WorkflowStatus.RegisteringProposals, "Proposal registration session is not open");
+        require(!voters[msg.sender].hasProposed, "You've already made a proposal");
+        require(proposals.length < 1000, "The maximum proposal amount is reached");
+        require(keccak256(abi.encode(_num)) != keccak256(abi.encode(0)), 'Proposal should not be 0');
+
+        voters[msg.sender].hasProposed = true;
+
+        Proposal memory newProposal = Proposal({
+        num: _num,
+        voteCount: 0
+        });
+
         proposals.push(newProposal);
-        
-        
+              
         emit ProposalRegistered(proposals.length-1); 
     }
 
    
-   function changeRequiredReportsForVerifierPromotion (uint256 _winningProposal) public {
-    variableToChange == _winningProposal;
-   }
+//    function changeRequiredReportsForVerifierPromotion (uint256 _winningProposal) public {
+//     variableToChange == _winningProposal;
+//    }
 
 //    function changeRequiredReportsForVerifierPromotion(uint256 _winningProposal) public {
 //     requiredReportsForVerifierPromotion == _winningProposal;
@@ -156,10 +164,9 @@ contract Voting is Dao {
 
     // GETTERS
 
-    function getProposals() external view onlyVoters returns (Proposal[] memory) {
-        require(workflowStatus != WorkflowStatus.RegisteringProposals, "Proposals' registration session is not finished");
+    function getProposals(uint256 _id) external view onlyVoters returns (Proposal memory) {
         require(proposals.length > 0, "No proposals registered yet");
-        return proposals;
+        return proposals[_id];
     }
 
     function getVoter(address _addr) external onlyOwner view returns (Voter memory) {
@@ -169,18 +176,21 @@ contract Voting is Dao {
 
 
     function vote(uint _proposalId) external onlyVoters {
-
-        voters[msg.sender].votedProposalId = _proposalId;
-
+        require(workflowStatus == WorkflowStatus.VotingSessionOpen,
+            "Voting session havent started yet");
+        require(voters[msg.sender].isRegistered, "You are not voter");
+        require(!voters[msg.sender].hasVoted, "You have already voted");
+        
         voters[msg.sender].hasVoted = true;
+        voters[msg.sender].votedProposalId = _proposalId;
         proposals[_proposalId].voteCount++;
 
         emit Voted(msg.sender, _proposalId);
     }
 
 
-     function tallyVote() public {
-       require(workflowStatus == WorkflowStatus.VotingSessionOpen, "Current status is not voting session ended");
+     function tallyVote() public onlyOwner {
+       require(workflowStatus == WorkflowStatus.VotingSessionOpen, "Voting session should be open");
         uint highestCount;
         
         for (uint i = 0; i < proposals.length; i++) {
@@ -251,23 +261,27 @@ contract Voting is Dao {
         emit WorkflowStatusChange(WorkflowStatus.NeutralStatus, WorkflowStatus.RegisteringVoters);
 
         // if (workflowChangeTime >= 7 days) {
-        //     proposalRegisterStart();
+        //     startProposalRegister();
         // }
     }
 
-    function proposalRegisterStart() public onlyOwner {
+    function startProposalRegister() public onlyOwner {
         require(workflowStatus == WorkflowStatus.RegisteringVoters, "You are not in registration session");
 
         workflowStatus = WorkflowStatus.RegisteringProposals;
         workflowChangeTime = block.timestamp;
+
+        // Genesis proposal for blank votes
+          Proposal memory newProposal;
+        newProposal.num = 1234567890;
+        proposals.push(newProposal);
 
         emit WorkflowStatusChange(WorkflowStatus.RegisteringVoters, WorkflowStatus.RegisteringProposals);
 
        
     }
 
-  
-    function votingStart() public onlyOwner {
+    function startVotingSession() public onlyOwner {
         require(workflowStatus == WorkflowStatus.RegisteringProposals, "Proposals' registration session is not finished");
         require(proposals.length > 0, "There is no proposal to vote for");
 
@@ -277,8 +291,8 @@ contract Voting is Dao {
 
    
 
-    // ajouter l'automatisation temporelle
-     function setWorkflowStatusAutomation(uint _num) external {
-        WorkflowStatus old_WorkflowStatus = workflowStatus;
-}
+//     // ajouter l'automatisation temporelle
+//      function setWorkflowStatusAutomation(uint _num) external {
+//         WorkflowStatus old_WorkflowStatus = workflowStatus;
+// }
 }
