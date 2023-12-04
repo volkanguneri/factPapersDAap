@@ -18,16 +18,25 @@ contract Voting is Dao {
     }
 
     uint256 variableToChange;
+    uint256 public requestNumberRN;
+    uint256 public requestNumberVN;
+    uint256 public requestNumberIV;
+    uint256 public requestNumberIA;
     uint256 public workflowChangeTime;
     uint256[] winningProposalId;
     uint256 winningProposal;
     bool exaequo;
 
-    uint256 numberOfVoters;
+    uint256 public numberOfVoters;
     Proposal[] proposals;
     mapping (address => Voter) private voters;
+    mapping (address => bool) private alreadyIncrementedRN;
+    mapping (address => bool) private alreadyIncrementedVN;
+    mapping (address => bool) private alreadyIncrementedIV;
+    mapping (address => bool) private alreadyIncrementedIA;
 
     enum WorkflowStatus {
+       NeutralStatus,
        RegisteringVoters,
        RegisteringProposals,
        VotingSessionOpen,
@@ -59,31 +68,35 @@ contract Voting is Dao {
 
     // DAO can change some variables by voting of majority of at least half of the community members after that at least 500 members subscribed.
 
-    function changeTotalReportNumber() internal onlyAuthor onlyVerifier returns(uint256){
-        uint256 requestNumber;
-        requestNumber ++;
-        
-        if (numberOfAuthors + numberOfVerifiers > 500 && requestNumber > numberOfAuthors + numberOfVerifiers / 2) {
-            startVoting(requiredReportsForVerifierPromotion);
-        }
-        return winningProposal;
+    function changeTotalReportNumber() external onlyAuthorOrVerifier returns(uint256){
+        require(!alreadyIncrementedRN[msg.sender], "You've already asked for a new min report number for promotion");
+        alreadyIncrementedRN[msg.sender] = true;
+        requestNumberRN ++;
     }
 
-    // function changeTotalVerificationNumber(uint256 newThreshold) internal onlyAuthor onlyVerifier {
-    //     requiredVerificationsForAuthorPromotion = newThreshold;
-    // }
-    // function changeTimeIntervalForVerifierPromotion (uint256 newInterval) internal onlyAuthor onlyVerifier {
-    //     timeIntervalForVerifierPromotion  = newInterval;
-    // }
+    function changeTotalVerificationNumber() external onlyAuthorOrVerifier {
+        require(!alreadyIncrementedVN[msg.sender], "You've already asked for a new min verification number for promotion");
+        alreadyIncrementedVN[msg.sender] = true;
+        requestNumberVN ++;
+    }
+    function changeTimeIntervalForVerifierPromotion () external onlyAuthorOrVerifier {
+         require(!alreadyIncrementedIV[msg.sender], "You've already asked for a new time interval for verifier promotion");
+        alreadyIncrementedIV[msg.sender] = true;
+        requestNumberIV ++;
+    }
+    
 
-    // function changeTimeIntervalForAuthorPromotion(uint256  newInterval) internal onlyAuthor onlyVerifier {
-    //     timeIntervalForAuthorPromotion =  newInterval;
-    // }
+    function changeTimeIntervalForAuthorPromotion() external onlyAuthorOrVerifier {
+         require(!alreadyIncrementedIA[msg.sender], "You've already asked for a new time interval for author promotion");
+        alreadyIncrementedIA[msg.sender] = true;
+        requestNumberIA ++;
+    }
 
-    function startVoting(uint _variableToChange) internal returns (uint256){
-        variableToChange = _variableToChange;
+
+    
+
+    function startVoting() external onlyOwner returns (uint256){
         startRegisteringVoters();
-        return variableToChange;
     }
 
     // function reStartVoting(uint _variableToChange, uint values) internal returns (uint256){
@@ -93,14 +106,24 @@ contract Voting is Dao {
     // }
 
 
-    function voterRegisters() external onlyVoters {
-        require(workflowStatus == WorkflowStatus.RegisteringVoters, "Voter registering is not permissed now");
-        require(voters[msg.sender].isRegistered, "Voter already added");
-        require(msg.sender != address(0), "Address cannot be the zero address");
+    // function voterRegisters() external onlyOwner {
+    //     require(workflowStatus == WorkflowStatus.RegisteringVoters, "Voter registering is not permissed now");
+    //     require(voters[msg.sender].isRegistered, "Voter already added");
+    //     require(msg.sender != address(0), "Address cannot be the zero address");
         
-        voters[msg.sender].isRegistered = true;
+    //     voters[msg.sender].isRegistered = true;
+    //     numberOfVoters++;
+    //     emit VoterRegistered(msg.sender);
+    // }
+
+    function voterRegisters(address _addr) external onlyOwner {
+        require(workflowStatus == WorkflowStatus.RegisteringVoters, "Voter registering is not permissed now");
+        require(!voters[_addr].isRegistered, "Voter already added");
+        require(_addr != address(0), "Address cannot be the zero address");
+        
+        voters[_addr].isRegistered = true;
         numberOfVoters++;
-        emit VoterRegistered(msg.sender);
+        emit VoterRegistered(_addr);
     }
 
     // function banVoter(address _addr) external {
@@ -139,11 +162,10 @@ contract Voting is Dao {
         return proposals;
     }
 
-    // function getVoters() external onlyVoters view returns (Voter[] memory) {
-    //     require(workflowStatus != WorkflowStatus.RegisteringVoters, "Voters' registration session is not finished yet");
-    //     require(numberOfVoters > 0, "No voters registered yet");
-    //     return voters;
-    // }
+    function getVoter(address _addr) external onlyOwner view returns (Voter memory) {
+        require(numberOfVoters > 0, "No voters registered yet");
+        return voters[_addr];
+    }
 
 
     function vote(uint _proposalId) external onlyVoters {
@@ -220,16 +242,17 @@ contract Voting is Dao {
     // }
 
     function startRegisteringVoters() public onlyOwner {
-        require(workflowStatus != WorkflowStatus.RegisteringVoters, "Registration session has already started");
+        require(workflowStatus == WorkflowStatus.NeutralStatus, "Registration session has already started");
 
         workflowStatus = WorkflowStatus.RegisteringVoters;
         workflowChangeTime = block.timestamp;
 
         emit votingStarted(WorkflowStatus.RegisteringVoters);
+        emit WorkflowStatusChange(WorkflowStatus.NeutralStatus, WorkflowStatus.RegisteringVoters);
 
-        if (workflowChangeTime >= 7 days) {
-            proposalRegisterStart();
-        }
+        // if (workflowChangeTime >= 7 days) {
+        //     proposalRegisterStart();
+        // }
     }
 
     function proposalRegisterStart() public onlyOwner {

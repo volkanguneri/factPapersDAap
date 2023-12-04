@@ -176,3 +176,118 @@ import { useWagmi } from 'wagmi';
         }
         emit WorkflowStatusChange(old_WorkflowStatus, workflowStatus);
        } 
+
+
+describe("AUTOMATED VOTING START CONDITIONS", async function () {
+  let voting, owner, voter1, voter2, author, verifier, users;
+
+  let authors = [];
+  let verifiers = [];
+
+  async function initializeBlockchain500() {
+    [owner, voter1, voter2, author, verifier, ...users] =
+      await ethers.getSigners();
+    const contract = await ethers.getContractFactory("Voting");
+    voting = await contract.deploy(owner);
+
+    console.log("USER", users.length);
+
+    for (let i = 0; i < 250; i++) {
+      let authorAddress = await voting
+        .connect(owner)
+        .createAuthor(users[i].address);
+      authors.push(authorAddress);
+    }
+
+    for (let i = 0; i < 250; i++) {
+      let verifierAddress = await voting
+        .connect(owner)
+        .createVerifier(users[i].address);
+      verifiers.push(verifierAddress);
+    }
+
+    return { voting, authors, verifiers };
+  }
+
+  async function initializeBlockchain501() {
+    [owner, voter1, voter2, author, verifier, ...users] =
+      await ethers.getSigners();
+    const contract = await ethers.getContractFactory("Voting");
+    voting = await contract.deploy(owner);
+
+    console.log("USER", users.length);
+
+    let authorAddress1 = await voting
+      .connect(owner)
+      .createAuthor(owner.address);
+    authors.push(authorAddress1);
+    let authorAddress2 = await voting
+      .connect(owner)
+      .createAuthor(voter1.address);
+    authors.push(authorAddress2);
+    let authorAddress3 = await voting
+      .connect(owner)
+      .createAuthor(voter2.address);
+    authors.push(authorAddress3);
+    let authorAddress4 = await voting
+      .connect(owner)
+      .createAuthor(author.address);
+    authors.push(authorAddress4);
+    let authorAddress5 = await voting
+      .connect(owner)
+      .createAuthor(verifier.address);
+    authors.push(authorAddress5);
+
+    // for (let i = 0; i < 250; i++) {
+    //   let verifierAddress = await voting.connect(owner).createVerifier(users[i].address);
+    //   verifiers.push(verifierAddress);
+    // }
+
+    return {
+      voting,
+      authorAddress1,
+      authorAddress2,
+      authorAddress3,
+      authorAddress4,
+      authorAddress5,
+    };
+  }
+
+  it("SHOULD NOT start voting when there are less than 500 eligible members request", async function () {
+    const {
+      authorAddress1,
+      authorAddress2,
+      authorAddress3,
+      authorAddress4,
+      authorAddress5,
+      voting,
+    } = await loadFixture(initializeBlockchain500);
+
+    await voting.connect(authorAddress1).changeTotalReportNumber();
+    await voting.connect(authorAddress2).changeTotalReportNumber();
+
+    // await expect(
+    //   voting.connect(author).changeTotalReportNumber()
+    // ).to.be.revertedWith(
+    //   "There should be more than 500 eligible requests so that a voting session starts"
+    // );
+    const workflowStatus = await voting.workflowStatus();
+    expect(workflowStatus).to.equal(0);
+  });
+
+  it("SHOULD start voting when there are more than 500 eligible members request", async function () {
+    const {
+      owner,
+      voter1,
+      voter2,
+      author,
+      verifier,
+      authors,
+      verifiers,
+      voting,
+    } = await loadFixture(initializeBlockchain501);
+
+    const workflowStatus = await voting.workflowStatus();
+    expect(workflowStatus).to.equal(1);
+  });
+});

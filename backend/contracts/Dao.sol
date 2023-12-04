@@ -71,7 +71,7 @@ contract Dao is Ownable {
     event PromotedToVerifier(address _verifier, uint256 _time);
     event MemberBanned(address xxx);
     event AuthorBanned(address _author);
-    event verifierBanned(address _verifier);
+    event VerifierBanned(address _verifier);
     event RegisteredReaderBanned(address _registeredReaderBanned);
 
 
@@ -97,9 +97,14 @@ contract Dao is Ownable {
         _;
     }
     modifier onlyVerifier() {
-        require(verifiers[msg.sender].isVerifier, "Only verifier can access!");
+        require(verifiers[msg.sender].isVerifier, "Only verifiers can access!");
         _;
     }
+
+    modifier onlyAuthorOrVerifier() {
+    require(authors[msg.sender].isAuthor || verifiers[msg.sender].isVerifier, "Only authors or verifiers can access!");
+    _;
+}
 
 
     // Initial DAO commuty selection ? xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -121,34 +126,44 @@ contract Dao is Ownable {
         emit VerifierCreated(msg.sender, true, block.timestamp);
     }
 
-    // Promotion functions
-
-    // Promoted to verifier
-    function fromReaderToVerifier() external {
-        require(readers[msg.sender].totalReportNumber >= requiredReportsForVerifierPromotion, "Not enough reports for verifier promotion");
-        require(readers[msg.sender].firstReportDate > timeIntervalForVerifierPromotion, "Not eligible for verifier promotion yet");
-        verifiers[msg.sender] = Verifier(true, block.timestamp, 0);
-        
-        emit PromotedToVerifier(msg.sender, block.timestamp);
-    }
-
-    // Promoted to author
-    function fromVerifierToAuthor() external onlyVerifier {
-        require(verifiers[msg.sender].totalVerificationDoneNumber >= requiredVerificationsForAuthorPromotion, "Not enough verifications for author promotion");
-        require(readers[msg.sender].firstReportDate > timeIntervalForAuthorPromotion,"Not eligible for author promotion yet" );
-        verifiers[msg.sender].isVerifier = false;
-        authors[msg.sender] = Author(true, 0);
-
-        emit PromotedToAuthor(msg.sender, block.timestamp);
-
-    }
-
     // To ban author
-    function banAuthor(address _author) external {
-        authors[msg.sender].isAuthor = false; 
+    function banAuthor(address _author) external onlyOwner{
+        require(authors[_author].isAuthor, "Author not found");
+        authors[_author].isAuthor = false; 
         numberOfAuthors--;
         emit AuthorBanned(_author);
     }
+
+    // To ban verifier
+    function banVerifier(address _verifier) external onlyOwner{
+        require(verifiers[_verifier].isVerifier, "Verifier not found");
+        verifiers[_verifier].isVerifier = false; 
+        numberOfVerifiers--;
+        emit VerifierBanned(_verifier);
+    }
+
+    // // Promotion functions
+
+    // // Promoted to verifier
+    // function fromReaderToVerifier() external {
+    //     require(readers[msg.sender].totalReportNumber >= requiredReportsForVerifierPromotion, "Not enough reports for verifier promotion");
+    //     require(readers[msg.sender].firstReportDate > timeIntervalForVerifierPromotion, "Not eligible for verifier promotion yet");
+    //     verifiers[msg.sender] = Verifier(true, block.timestamp, 0);
+        
+    //     emit PromotedToVerifier(msg.sender, block.timestamp);
+    // }
+
+    // // Promoted to author
+    // function fromVerifierToAuthor() external onlyVerifier {
+    //     require(verifiers[msg.sender].totalVerificationDoneNumber >= requiredVerificationsForAuthorPromotion, "Not enough verifications for author promotion");
+    //     require(readers[msg.sender].firstReportDate > timeIntervalForAuthorPromotion,"Not eligible for author promotion yet" );
+    //     verifiers[msg.sender].isVerifier = false;
+    //     authors[msg.sender] = Author(true, 0);
+
+    //     emit PromotedToAuthor(msg.sender, block.timestamp);
+    // }
+
+    
 
     
 }
