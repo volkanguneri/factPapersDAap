@@ -1,0 +1,80 @@
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity ^0.8.22;
+
+import "./Dao.sol";
+import "./Voting.sol";
+
+contract VotingManagement is Dao, Voting("") { 
+// DAO can change some variables by voting of majority of at least half of the community members after that at least 500 members subscribed.
+
+    string public requiredReportsForVerifierPromotion;
+    string public requiredVerificationsForAuthorPromotion;
+    string public timeIntervalForVerifierPromotion;
+    string public timeIntervalForAuthorPromotion;
+
+    uint256 public requestNumberRN;
+    uint256 public requestNumberVN;
+    uint256 public requestNumberIV;
+    uint256 public requestNumberIA;
+
+    address[] public votings;
+    
+    mapping (address => bool) private alreadyIncrementedRN;
+    mapping (address => bool) private alreadyIncrementedVN;
+    mapping (address => bool) private alreadyIncrementedIV;
+    mapping (address => bool) private alreadyIncrementedIA;
+
+    constructor() {
+    }
+
+    function changeTotalReportNumber() external onlyAuthorOrVerifier returns(uint256){
+        require(!alreadyIncrementedRN[msg.sender], "You've already asked for a new min report number for promotion");
+        alreadyIncrementedRN[msg.sender] = true;
+        requestNumberRN ++;
+    }
+
+    function changeTotalVerificationNumber() external onlyAuthorOrVerifier {
+        require(!alreadyIncrementedVN[msg.sender], "You've already asked for a new min verification number for promotion");
+        alreadyIncrementedVN[msg.sender] = true;
+        requestNumberVN ++;
+    }
+    function changeTimeIntervalForVerifierPromotion () external onlyAuthorOrVerifier {
+         require(!alreadyIncrementedIV[msg.sender], "You've already asked for a new time interval for verifier promotion");
+        alreadyIncrementedIV[msg.sender] = true;
+        requestNumberIV ++;
+    }
+    
+
+    function changeTimeIntervalForAuthorPromotion() external onlyAuthorOrVerifier {
+         require(!alreadyIncrementedIA[msg.sender], "You've already asked for a new time interval for author promotion");
+        alreadyIncrementedIA[msg.sender] = true;
+        requestNumberIA ++;
+    }
+
+
+    function startVotingForReportNumber() external onlyOwner returns (uint256){
+        require(requestNumberRN > numberOfAuthors + numberOfVerifiers / 2, "The request number should be more than the half of the total of author et verifier numbers" );
+        Voting newVoting = new Voting(requiredReportsForVerifierPromotion);
+        votings.push(address(newVoting));
+        startRegisteringVoters();
+    }
+    function startVotingForVerificationNumber() external onlyOwner returns (uint256){
+        require(requestNumberVN > numberOfAuthors + numberOfVerifiers / 2, "The request number should be more than the half of the total of author and verifier numbers" );
+        Voting newVoting = new Voting(requiredVerificationsForAuthorPromotion);
+        votings.push(address(newVoting));
+        startRegisteringVoters();
+    }
+    function startVotingForVerifierPromotionInterval() external onlyOwner returns (uint256){
+        require(requestNumberIV > numberOfAuthors + numberOfVerifiers / 2, "The request number should be more than the half of the total of author and verifier numbers" );
+        Voting newVoting = new Voting(timeIntervalForVerifierPromotion);
+        votings.push(address(newVoting));
+        startRegisteringVoters();
+    }
+    function startVotingForAuthorPromotionInterval() external onlyOwner returns (uint256){
+        require(requestNumberIA > numberOfAuthors + numberOfVerifiers / 2, "The request number should be more than the half of the total of author and verifier numbers" );
+        Voting newVoting = new Voting(timeIntervalForAuthorPromotion);
+        votings.push(address(newVoting));
+        startRegisteringVoters();
+    }
+}

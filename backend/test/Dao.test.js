@@ -34,25 +34,25 @@ describe("DAO", async function () {
     });
 
     it("should set initial value for requiredReports", async function () {
-      const requiredReports = await dao.requiredReportsForVerifierPromotion();
+      const requiredReports = await dao.VrequiredReportsForVerifierPromotion();
       expect(requiredReports).to.equal(10);
     });
 
     it("should set initial value for requiredVerifications", async function () {
       const requiredVerifications =
-        await dao.requiredVerificationsForAuthorPromotion();
+        await dao.VrequiredVerificationsForAuthorPromotion();
       expect(requiredVerifications).to.equal(20);
     });
 
     it("should set initial value for verifierPromotionInterval", async function () {
       const verifierPromotionInterval =
-        await dao.timeIntervalForVerifierPromotion();
+        await dao.VtimeIntervalForVerifierPromotion();
       expect(verifierPromotionInterval).to.equal(6 * 30 * 24 * 60 * 60); // 6 months in seconds
     });
 
     it("SHOULD set initial value for authorPromotionInterval", async function () {
       const authorPromotionInterval =
-        await dao.timeIntervalForAuthorPromotion();
+        await dao.VtimeIntervalForAuthorPromotion();
       expect(authorPromotionInterval).to.equal(12 * 30 * 24 * 60 * 60); // 12 months in seconds
     });
   });

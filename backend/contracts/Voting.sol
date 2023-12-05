@@ -18,23 +18,16 @@ contract Voting is Dao {
         uint voteCount;
     }
 
-    uint256 variableToChange;
-    uint256 public requestNumberRN;
-    uint256 public requestNumberVN;
-    uint256 public requestNumberIV;
-    uint256 public requestNumberIA;
     uint256 public workflowChangeTime;
     uint256[] winningProposalId;
     uint256 winningProposal;
-    bool exaequo;
-
     uint256 public numberOfVoters;
+
+    bool exaequo;
+    string variableToChange;
+
     Proposal[] proposals;
     mapping (address => Voter) private voters;
-    mapping (address => bool) private alreadyIncrementedRN;
-    mapping (address => bool) private alreadyIncrementedVN;
-    mapping (address => bool) private alreadyIncrementedIV;
-    mapping (address => bool) private alreadyIncrementedIA;
 
     enum WorkflowStatus {
        NeutralStatus,
@@ -59,46 +52,16 @@ contract Voting is Dao {
     event Voted(address voter, uint proposalId);
     event VoterBanned(address voter);
 
-
-    constructor() {}
+    constructor(string memory _variableToChange) Dao() {
+        variableToChange = _variableToChange;
+    }
 
     modifier onlyVoters() {
         require(voters[msg.sender].isRegistered, "You're not a voter");
         _;
     }
 
-    // DAO can change some variables by voting of majority of at least half of the community members after that at least 500 members subscribed.
-
-    function changeTotalReportNumber() external onlyAuthorOrVerifier returns(uint256){
-        require(!alreadyIncrementedRN[msg.sender], "You've already asked for a new min report number for promotion");
-        alreadyIncrementedRN[msg.sender] = true;
-        requestNumberRN ++;
-    }
-
-    function changeTotalVerificationNumber() external onlyAuthorOrVerifier {
-        require(!alreadyIncrementedVN[msg.sender], "You've already asked for a new min verification number for promotion");
-        alreadyIncrementedVN[msg.sender] = true;
-        requestNumberVN ++;
-    }
-    function changeTimeIntervalForVerifierPromotion () external onlyAuthorOrVerifier {
-         require(!alreadyIncrementedIV[msg.sender], "You've already asked for a new time interval for verifier promotion");
-        alreadyIncrementedIV[msg.sender] = true;
-        requestNumberIV ++;
-    }
     
-
-    function changeTimeIntervalForAuthorPromotion() external onlyAuthorOrVerifier {
-         require(!alreadyIncrementedIA[msg.sender], "You've already asked for a new time interval for author promotion");
-        alreadyIncrementedIA[msg.sender] = true;
-        requestNumberIA ++;
-    }
-
-
-    
-
-    function startVoting() external onlyOwner returns (uint256){
-        startRegisteringVoters();
-    }
 
     // function reStartVoting(uint _variableToChange, uint values) internal returns (uint256){
     //     variableToChange = _variableToChange;
@@ -214,8 +177,8 @@ contract Voting is Dao {
         // if(!exaequo) {
         //   emit votingEnded(winningProposalId);
         // } else {
-        //     // reStartVoting(uint _variableToChange, uint values);
-        // }aazsazsa
+        //     reStartVoting(uint _variableToChange, uint values);
+        // }
 
     }
 
@@ -272,7 +235,7 @@ contract Voting is Dao {
         workflowChangeTime = block.timestamp;
 
         // Genesis proposal for blank votes
-          Proposal memory newProposal;
+        Proposal memory newProposal;
         newProposal.num = 1234567890;
         proposals.push(newProposal);
 
