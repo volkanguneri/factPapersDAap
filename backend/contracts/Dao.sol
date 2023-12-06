@@ -37,77 +37,30 @@ contract Dao is Ownable {
         uint256 totalReportNumber;
     }
 
-    struct Donator {
-        bool isDonator;
-        uint256 donateAmount;
-        uint256[] donateDates;
-    }
-
    
     // Mappings
 
     mapping(address => Author) public authors;
     mapping(address => Verifier) public verifiers;
     mapping(address => RegisteredReader) public readers;
-    mapping(address => Donator) public donators;
-
-    // Author[] public authors;
-    // Verifier[] public verifiers;
-
-    string[] public articlesCID;
-    address[] public reports;
-    address[] public articles;
 
 
     // Events
 
     event AuthorCreated(address indexed author, bool isAuthor, uint256 date);
     event VerifierCreated(address indexed verifier, bool isVerier, uint256 date);
-    event HasDonated(address indexed donator, bool isDonator, uint256 donateAmount, uint256 donateDate);
-    event ArticlePublished(string _CID);
-    event ArticleVerified(address xxx);
-    event ReportSubmitted(address xxx);
-    event PromotedToAuthor(address _reader, uint256 _time);
-    event PromotedToVerifier(address _verifier, uint256 _time);
-    event MemberBanned(address xxx);
     event AuthorBanned(address _author);
     event VerifierBanned(address _verifier);
     event RegisteredReaderBanned(address _registeredReaderBanned);
-
-
 
     constructor() Ownable(msg.sender) {
       
     }
 
-
-
-    // modifier onlyAuthor() {
-    //     require(authors[msg.sender].isAuthor, "Only authors can access!");
-        
-    //     _;
-    // }
-
-    // modifier onlyReader() {
-    //     require(readers[msg.sender].isReader, "Only readers who has already reported can access!");
-        
-    //     _;
-    // }
-    // modifier onlyVerifier() {
-    //     require(verifiers[msg.sender].isVerifier, "Only verifiers can access!");
-    //     _;
-    // }
-
     modifier onlyAuthorOrVerifier() {
-    require(authors[msg.sender].isAuthor || verifiers[msg.sender].isVerifier, "Only authors or verifiers can access!");
+        require(authors[msg.sender].isAuthor || verifiers[msg.sender].isVerifier, "Only authors or verifiers can access!");
     _;
 }
-
-
-    // Initial DAO commuty selection ? xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-
-
     // Whitelisted members
     function createAuthor(address author) external onlyOwner {
         require(!authors[author].isAuthor, "Author already exists");
@@ -138,30 +91,5 @@ contract Dao is Ownable {
         numberOfVerifiers--;
         emit VerifierBanned(_verifier);
     }
-
-    // // Promotion functions
-
-    // // Promoted to verifier
-    // function fromReaderToVerifier() external {
-    //     require(readers[msg.sender].totalReportNumber >= requiredReportsForVerifierPromotion, "Not enough reports for verifier promotion");
-    //     require(readers[msg.sender].firstReportDate > timeIntervalForVerifierPromotion, "Not eligible for verifier promotion yet");
-    //     verifiers[msg.sender] = Verifier(true, block.timestamp, 0);
-        
-    //     emit PromotedToVerifier(msg.sender, block.timestamp);
-    // }
-
-    // // Promoted to author
-    // function fromVerifierToAuthor() external onlyVerifier {
-    //     require(verifiers[msg.sender].totalVerificationDoneNumber >= requiredVerificationsForAuthorPromotion, "Not enough verifications for author promotion");
-    //     require(readers[msg.sender].firstReportDate > timeIntervalForAuthorPromotion,"Not eligible for author promotion yet" );
-    //     verifiers[msg.sender].isVerifier = false;
-    //     authors[msg.sender] = Author(true, 0);
-
-    //     emit PromotedToAuthor(msg.sender, block.timestamp);
-    // }
-
-    
-
-    
 }
 

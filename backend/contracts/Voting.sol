@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.22;
+import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 
 import "./Dao.sol";
 
-contract Voting is Dao {
+pragma solidity ^0.8.22;
+
+contract Voting is Ownable, Dao {
 
     struct Voter {
         bool isRegistered;
@@ -18,16 +20,33 @@ contract Voting is Dao {
         uint voteCount;
     }
 
-    uint256 public workflowChangeTime;
+    // Voting newVoting;
+    Voting[] public votings;
+
+  
+
+    string variableToChange;
+  
+    uint256 public requestNumberRN;
+    uint256 public requestNumberVN;
+    uint256 public requestNumberIV;
+    uint256 public requestNumberIA;
+
+
+    uint256 workflowChangeTime;
     uint256[] winningProposalId;
     uint256 winningProposal;
     uint256 public numberOfVoters;
 
     bool exaequo;
-    string variableToChange;
 
     Proposal[] proposals;
     mapping (address => Voter) private voters;
+
+    mapping (address => bool) private alreadyIncrementedRN;
+    mapping (address => bool) private alreadyIncrementedVN;
+    mapping (address => bool) private alreadyIncrementedIV;
+    mapping (address => bool) private alreadyIncrementedIA;
 
     enum WorkflowStatus {
        NeutralStatus,
@@ -41,8 +60,6 @@ contract Voting is Dao {
     WorkflowStatus public workflowStatus;
 
     // Events
-    event votingStarted(WorkflowStatus workflowStatus);
-    event votingEnded(uint256 _winningProposal);
     event VoterRegistered(address voterAddress);
     event WorkflowStatusChange(
         WorkflowStatus previousStatus,
@@ -50,35 +67,22 @@ contract Voting is Dao {
     );
     event ProposalRegistered(uint proposalId);
     event Voted(address voter, uint proposalId);
-    event VoterBanned(address voter);
+    event votingEnded(uint256 _winningProposal);
 
 
-    constructor() Dao() {}
-    
+    constructor(string memory _variableToChange) {
+        variableToChange = _variableToChange;
+    }
+
+     // constructor(address _addr) Ownable(msg.sender) {
+    //     voting = Voting(_addr);
+    // }
+
 
     modifier onlyVoters() {
         require(voters[msg.sender].isRegistered, "You're not a voter");
         _;
     }
-
-    
-
-    // function reStartVoting(uint _variableToChange, uint values) internal returns (uint256){
-    //     variableToChange = _variableToChange;
-    //     startRegisteringVoters;
-    //     return variableToChange;
-    // }
-
-
-    // function voterRegisters() external onlyOwner {
-    //     require(workflowStatus == WorkflowStatus.RegisteringVoters, "Voter registering is not permissed now");
-    //     require(voters[msg.sender].isRegistered, "Voter already added");
-    //     require(msg.sender != address(0), "Address cannot be the zero address");
-        
-    //     voters[msg.sender].isRegistered = true;
-    //     numberOfVoters++;
-    //     emit VoterRegistered(msg.sender);
-    // }
 
     function voterRegisters(address _addr) external onlyOwner {
         require(workflowStatus == WorkflowStatus.RegisteringVoters, "Voter registering is not permissed now");
@@ -90,19 +94,12 @@ contract Voting is Dao {
         emit VoterRegistered(_addr);
     }
 
-    // function banVoter(address _addr) external {
-    //     require(WorkflowStatus == WorkflowStatus.RegisteringVoters, "Voter registering is not permissed now");
-    //     require(!voters[msg.sender].isRegistered, "No voter existe for ths address");
-    //     voters[msg.sender].isRegistered = false;
-    //     numberOfVoters--;
-    //     emit VoterBanned(_addr);
-    // }
-
+    //Registering Proposals
     function registerProposal(uint256 _num) external onlyVoters {
         require(workflowStatus == WorkflowStatus.RegisteringProposals, "Proposal registration session is not open");
         require(!voters[msg.sender].hasProposed, "You've already made a proposal");
         require(proposals.length < 1000, "The maximum proposal amount is reached");
-        require(keccak256(abi.encode(_num)) != keccak256(abi.encode(0)), 'Proposal should not be 0');
+        require(_num != 0, 'Proposal should not be 0');
 
         voters[msg.sender].hasProposed = true;
 
@@ -115,15 +112,6 @@ contract Voting is Dao {
               
         emit ProposalRegistered(proposals.length-1); 
     }
-
-   
-//    function changeRequiredReportsForVerifierPromotion (uint256 _winningProposal) public {
-//     variableToChange == _winningProposal;
-//    }
-
-//    function changeRequiredReportsForVerifierPromotion(uint256 _winningProposal) public {
-//     requiredReportsForVerifierPromotion == _winningProposal;
-//    }
 
     // GETTERS
 
@@ -138,6 +126,7 @@ contract Voting is Dao {
     }
 
 
+    // Set Vote
     function vote(uint _proposalId) external onlyVoters {
         require(workflowStatus == WorkflowStatus.VotingSessionOpen,
             "Voting session havent started yet");
@@ -150,8 +139,7 @@ contract Voting is Dao {
 
         emit Voted(msg.sender, _proposalId);
     }
-
-
+    // Votes Count
      function tallyVote() public onlyOwner {
        require(workflowStatus == WorkflowStatus.VotingSessionOpen, "Voting session should be open");
         uint highestCount;
@@ -169,50 +157,11 @@ contract Voting is Dao {
             }
         }
 
-       
         workflowStatus = WorkflowStatus.VotesTallied;
         emit WorkflowStatusChange(WorkflowStatus.VotingSessionOpen, WorkflowStatus.VotesTallied);
-
-
-        // if(!exaequo) {
-        //   emit votingEnded(winningProposalId);
-        // } else {
-        //     reStartVoting(uint _variableToChange, uint values);
-        // }
-
     }
-
-
-
-    // function randomDraw() external onlyOwner returns(uint){
-    //     require(exaequo, "You can access to this function only in case of ex aequo");
-    //     require(workflowStatus == WorkflowStatus.VotesTallied, "Voting session is still open or votes are still not counted");
-
-    //     bytes32 randomHash = keccak256(abi.encodePacked(block.timestamp, blockhash(block.number - 1), winningProposals.length));
-    //     uint randomNum = uint(randomHash) % proposals.length;
-    //     winningProposalId = winningProposals[randomNum];
-    //     exaequo = false;
-    //     return winningProposalId;
-    // }
-
-
-    // function showWinningProposal() external view onlyVoters returns (uint, string memory, uint, address) {
-    //     require(workflowStatus == WorkflowStatus.VotesTallied, "Voting session is still open or votes are still not counted");
-    //     require(!exaequo, "Ex aequo. Admin should trigger random draw function before showing the winning proposal");
-
-    //     address winnerAddress = proposals[winningProposalId].proposer;
-    //     string memory winnerProposal = proposals[winningProposalId].description;
-    //     uint winnerProposalVoteCount = proposals[winningProposalId].voteCount;
-
-    //     return (winningProposalId, winnerProposal, winnerProposalVoteCount, winnerAddress);
-    // }
-
-    // function whoVotedForWhichProposal(address _addr) external view onlyVoters returns(uint) {
-    //     require(workflowStatus == WorkflowStatus.VotesTallied, "Voting session is still open or votes are still not counted");
-    //     require(voters[_addr].isRegistered, "Please enter a registered voter address");
-
-    //     return voters[_addr].votedProposalId;
-    // }
+   
+    // Workflowstatus
 
     function startRegisteringVoters() public onlyOwner {
         require(workflowStatus == WorkflowStatus.NeutralStatus, "Registration session has already started");
@@ -220,12 +169,7 @@ contract Voting is Dao {
         workflowStatus = WorkflowStatus.RegisteringVoters;
         workflowChangeTime = block.timestamp;
 
-        emit votingStarted(WorkflowStatus.RegisteringVoters);
         emit WorkflowStatusChange(WorkflowStatus.NeutralStatus, WorkflowStatus.RegisteringVoters);
-
-        // if (workflowChangeTime >= 7 days) {
-        //     startProposalRegister();
-        // }
     }
 
     function startProposalRegister() public onlyOwner {
@@ -240,11 +184,9 @@ contract Voting is Dao {
         proposals.push(newProposal);
 
         emit WorkflowStatusChange(WorkflowStatus.RegisteringVoters, WorkflowStatus.RegisteringProposals);
-
-       
     }
 
-    function startVotingSession() public onlyOwner {
+     function startVotingSession() public onlyOwner {
         require(workflowStatus == WorkflowStatus.RegisteringProposals, "Proposals' registration session is not finished");
         require(proposals.length > 0, "There is no proposal to vote for");
 
@@ -253,9 +195,58 @@ contract Voting is Dao {
     }
 
    
+    function changeTotalReportNumber() external onlyAuthorOrVerifier {
+        require(workflowStatus == WorkflowStatus.NeutralStatus, "There is already a voting going on");
+        require(!alreadyIncrementedRN[msg.sender], "You've already asked for a new min report number for promotion");
+        alreadyIncrementedRN[msg.sender] = true;
+        requestNumberRN ++;
+    }
 
-//     // ajouter l'automatisation temporelle
-//      function setWorkflowStatusAutomation(uint _num) external {
-//         WorkflowStatus old_WorkflowStatus = workflowStatus;
-// }
+    function changeTotalVerificationNumber() external onlyAuthorOrVerifier {
+        require(workflowStatus == WorkflowStatus.NeutralStatus, "There is already a voting going on");
+        require(!alreadyIncrementedVN[msg.sender], "You've already asked for a new min verification number for promotion");
+        alreadyIncrementedVN[msg.sender] = true;
+        requestNumberVN ++;
+    }
+    function changeTimeIntervalForVerifierPromotion () external onlyAuthorOrVerifier {
+        require(workflowStatus == WorkflowStatus.NeutralStatus, "There is already a voting going on");
+        require(!alreadyIncrementedIV[msg.sender], "You've already asked for a new time interval for verifier promotion");
+        alreadyIncrementedIV[msg.sender] = true;
+        requestNumberIV ++;
+    }
+    
+    function changeTimeIntervalForAuthorPromotion() external onlyAuthorOrVerifier {
+        require(workflowStatus == WorkflowStatus.NeutralStatus, "There is already a voting going on");
+        require(!alreadyIncrementedIA[msg.sender], "You've already asked for a new time interval for author promotion");
+        alreadyIncrementedIA[msg.sender] = true;
+        requestNumberIA ++;
+    }
+
+
+    function startVotingForReportNumber() external onlyOwner {
+        require(workflowStatus == WorkflowStatus.NeutralStatus, "There is already a voting going on");
+        require(requestNumberRN > numberOfAuthors + numberOfVerifiers / 2, "The request number should be more than the half of the total of author et verifier numbers" );
+        variableToChange = "requiredReportsForVerifierPromotion"; 
+        startRegisteringVoters();
+    }
+    function startVotingForVerificationNumber() external onlyOwner{
+        require(workflowStatus == WorkflowStatus.NeutralStatus, "There is already a voting going on");
+        require(requestNumberVN > numberOfAuthors + numberOfVerifiers / 2, "The request number should be more than the half of the total of author and verifier numbers" );
+        variableToChange = "requiredVerificationsForAuthorPromotion"; 
+        startRegisteringVoters();
+    }
+    function startVotingForVerifierPromotionInterval() external onlyOwner{
+        require(workflowStatus == WorkflowStatus.NeutralStatus, "There is already a voting going on");
+        require(requestNumberIV > numberOfAuthors + numberOfVerifiers / 2, "The request number should be more than the half of the total of author and verifier numbers" );
+        variableToChange = "timeIntervalForVerifierPromotion"; 
+        startRegisteringVoters();
+    }
+    function startVotingForAuthorPromotionInterval() external onlyOwner {
+        require(workflowStatus == WorkflowStatus.NeutralStatus, "There is already a voting going on");
+        require(requestNumberIA > numberOfAuthors + numberOfVerifiers / 2, "The request number should be more than the half of the total of author and verifier numbers" );
+        variableToChange = "timeIntervalForAuthorPromotion"; 
+        startRegisteringVoters();
+    }
 }
+
+

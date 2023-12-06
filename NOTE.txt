@@ -291,3 +291,25 @@ describe("AUTOMATED VOTING START CONDITIONS", async function () {
     expect(workflowStatus).to.equal(1);
   });
 });
+
+
+
+
+
+
+   // // Promoted to verifier
+    // function fromReaderToVerifier() external {
+    //     require(readers[msg.sender].totalReportNumber >= requiredReportsForVerifierPromotion, "Not enough reports for verifier promotion");
+    //     require(readers[msg.sender].firstReportDate > timeIntervalForVerifierPromotion, "Not eligible for verifier promotion yet");
+    //     verifiers[msg.sender] = Verifier(true, block.timestamp, 0);  
+    //     emit PromotedToVerifier(msg.sender, block.timestamp);
+    // }
+
+    // // Promoted to author
+    // function fromVerifierToAuthor() external onlyVerifier {
+    //     require(verifiers[msg.sender].totalVerificationDoneNumber >= requiredVerificationsForAuthorPromotion, "Not enough verifications for author promotion");
+    //     require(readers[msg.sender].firstReportDate > timeIntervalForAuthorPromotion,"Not eligible for author promotion yet" );
+    //     verifiers[msg.sender].isVerifier = false;
+    //     authors[msg.sender] = Author(true, 0);
+    //     emit PromotedToAuthor(msg.sender, block.timestamp);
+    // }

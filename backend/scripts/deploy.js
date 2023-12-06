@@ -18,13 +18,6 @@ async function main() {
   const voting = await Voting.deploy("");
 
   console.log("Voting deployed to:", voting.target);
-
-  // VOTINGMANAGEMENT DEPLOYMENT
-
-  const VotingManagement = await ethers.getContractFactory("VotingManagement");
-  const votingManagement = await VotingManagement.deploy();
-
-  console.log("Voting Management deployed to:", votingManagement.target);
 }
 main()
   .then(() => process.exit(0))
