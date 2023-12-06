@@ -12,7 +12,7 @@ import {
 // import { useAccount } from "wagmi";
 
 // Contract's information
-import { abi, contractAddress } from "../../constants/index";
+import { Voting_Abi, contractAddress } from "../../constants/index";
 
 import { Flex } from "./Styles/Flex.styled";
 import { H2 } from "./Styles/H2.styled";
@@ -27,7 +27,7 @@ const Proposals = () => {
     try {
       const { request } = await prepareWriteContract({
         address: contractAddress,
-        abi: abi,
+        abi: Voting_Abi,
         functionName: "addProposal",
         args: [description],
       });

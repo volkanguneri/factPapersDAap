@@ -17,7 +17,7 @@ import { usePublicClient } from "wagmi";
 import { hardhat } from "viem/chains";
 
 // Contract's information
-import { abi, contractAddress } from "@/constants/index";
+import { Voting_Abi, contractAddress } from "@/constants/index";
 
 import { Flex } from "./Styles/Flex.styled";
 import { H2 } from "./Styles/H2.styled";
@@ -58,7 +58,7 @@ const Whitelist = () => {
     try {
       const { request } = await prepareWriteContract({
         address: contractAddress,
-        abi: abi,
+        abi: Voting_Abi,
         functionName: "addVoter",
         args: [voter],
       });
@@ -96,7 +96,7 @@ const Whitelist = () => {
       {voterRegisteredEvents ? (
         <div>
           <ul>
-            {console.log(voterRegisteredEvents) &&
+            {voterRegisteredEvents &&
               voterRegisteredEvents.map((address, index) => (
                 <li key={index}>
                   <span>Added Voter Address : </span>

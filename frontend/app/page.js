@@ -1,15 +1,16 @@
+"use client";
 import Header from "@/components/Header/Header";
 import Navbar from "@/components/Navbar/Navbar";
-import Articles from "@/components/Articles/Articles";
 import Footer from "@/components/Footer/Footer";
 import Voting from "@/components/Voting/Voting";
+import Governance from "@/components/Governance/Governance";
 
 export default function Home() {
   return (
     <>
       <Header />
       <Navbar />
-      <Articles />
+      <Governance />
       <Voting />
       <Footer />
     </>

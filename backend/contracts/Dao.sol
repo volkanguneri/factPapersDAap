@@ -9,10 +9,10 @@ contract Dao is Ownable {
 
     // DAO rules for promotion that the elligible community can change values by voting
 
-    uint256 public VrequiredReportsForVerifierPromotion;
-    uint256 public VrequiredVerificationsForAuthorPromotion;
-    uint256 public VtimeIntervalForVerifierPromotion;
-    uint256 public VtimeIntervalForAuthorPromotion;
+    uint256 public VrequiredReportsForVerifierPromotion = 10;
+    uint256 public VrequiredVerificationsForAuthorPromotion = 20;
+    uint256 public VtimeIntervalForVerifierPromotion = 6 * 30 * 24 * 60 * 60; // 12 months in seconds;
+    uint256 public VtimeIntervalForAuthorPromotion = 12 * 30 * 24 * 60 * 60; // 12 months in seconds
 
     uint256 public numberOfAuthors;
     uint256 public numberOfVerifiers;
@@ -77,10 +77,7 @@ contract Dao is Ownable {
 
 
     constructor() Ownable(msg.sender) {
-        VrequiredReportsForVerifierPromotion = 10;
-        VrequiredVerificationsForAuthorPromotion  = 20;
-        VtimeIntervalForVerifierPromotion = 6 * 30 * 24 * 60 * 60; // 12 months in seconds
-        VtimeIntervalForAuthorPromotion = 12 * 30 * 24 * 60 * 60; // 12 months in seconds
+      
     }
 
 

@@ -7,7 +7,7 @@ import { useState } from "react";
 import { readContract } from "@wagmi/core";
 
 // Importations nécessaires
-import { abi, contractAddress } from "../../constants/index";
+import { Voting_Abi, contractAddress } from "../../constants/index";
 
 // Styled Components
 import { H2 } from "./Styles/H2.styled";
@@ -22,7 +22,7 @@ const Result = () => {
     try {
       const data = await readContract({
         address: contractAddress,
-        abi: abi,
+        abi: Voting_Abi,
         functionName: "winningProposalID",
       });
       setWinningProposalID(data);
@@ -36,7 +36,7 @@ const Result = () => {
     try {
       const proposalData = await readContract({
         address: contractAddress,
-        abi: abi,
+        abi: Voting_Abi,
         functionName: "getOneProposal",
         args: [proposalId],
       });

@@ -19,7 +19,7 @@ const Menu = () => {
           <StyledLinks href="#">Objection</StyledLinks>
         </li>
         <li>
-          <StyledLinks href="#">Voting</StyledLinks>
+          <StyledLinks href="#">Gouvernance</StyledLinks>
         </li>
       </ul>
     </StyledNavbar>

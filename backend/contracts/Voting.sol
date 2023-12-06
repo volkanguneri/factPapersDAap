@@ -52,9 +52,9 @@ contract Voting is Dao {
     event Voted(address voter, uint proposalId);
     event VoterBanned(address voter);
 
-    constructor(string memory _variableToChange) Dao() {
-        variableToChange = _variableToChange;
-    }
+
+    constructor() Dao() {}
+    
 
     modifier onlyVoters() {
         require(voters[msg.sender].isRegistered, "You're not a voter");

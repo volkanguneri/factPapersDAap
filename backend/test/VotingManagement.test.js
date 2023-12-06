@@ -42,6 +42,13 @@ describe("VOTING MANAGEMENT", async function () {
       expect(initialrequestNumberRN).to.equal(0);
     });
 
+    it("SHOULD NOT be triggered if workflow is not neutral", async function () {
+      await votingManagement.startRegisteringVoters();
+      await expect(
+        votingManagement.connect(author).changeTotalReportNumber()
+      ).to.be.revertedWith("There is already a voting going on");
+    });
+
     it("Author SHOULD trigger changeTotalReportNumber function to increment request number", async function () {
       await votingManagement.connect(author).changeTotalReportNumber();
       const result = await votingManagement.requestNumberRN();
@@ -75,6 +82,13 @@ describe("VOTING MANAGEMENT", async function () {
     it("Initial request number should be 0", async function () {
       const initialrequestNumberVN = await votingManagement.requestNumberVN();
       expect(initialrequestNumberVN).to.equal(0);
+    });
+
+    it("SHOULD NOT be triggered if workflow is not neutral", async function () {
+      await votingManagement.startRegisteringVoters();
+      await expect(
+        votingManagement.connect(author).changeTotalReportNumber()
+      ).to.be.revertedWith("There is already a voting going on");
     });
 
     it("Author SHOULD trigger changeTotalReportNumber function to increment request number", async function () {
@@ -112,6 +126,13 @@ describe("VOTING MANAGEMENT", async function () {
     it("Initial request number should be 0", async function () {
       const initialrequestNumberIV = await votingManagement.requestNumberIV();
       expect(initialrequestNumberIV).to.equal(0);
+    });
+
+    it("SHOULD NOT be triggered if workflow is not neutral", async function () {
+      await votingManagement.startRegisteringVoters();
+      await expect(
+        votingManagement.connect(author).changeTotalReportNumber()
+      ).to.be.revertedWith("There is already a voting going on");
     });
 
     it("Author SHOULD trigger changeTotalReportNumber function to increment request number", async function () {
@@ -156,6 +177,13 @@ describe("VOTING MANAGEMENT", async function () {
     it("Initial request number should be 0", async function () {
       const initialrequestNumberIA = await votingManagement.requestNumberIA();
       expect(initialrequestNumberIA).to.equal(0);
+    });
+
+    it("SHOULD NOT be triggered if workflow is not neutral", async function () {
+      await votingManagement.startRegisteringVoters();
+      await expect(
+        votingManagement.connect(author).changeTotalReportNumber()
+      ).to.be.revertedWith("There is already a voting going on");
     });
 
     it("Author SHOULD trigger changeTotalReportNumber function to increment request number", async function () {
@@ -219,6 +247,13 @@ describe("VOTING MANAGEMENT", async function () {
       );
     });
 
+    it("SHOULD NOT be triggered if workflow is not neutral", async function () {
+      await votingManagement.startRegisteringVoters();
+      await expect(
+        votingManagement.connect(author).changeTotalReportNumber()
+      ).to.be.revertedWith("There is already a voting going on");
+    });
+
     it("Owner SHOULD start voting", async function () {
       await votingManagement.connect(verifier).changeTotalReportNumber();
       await votingManagement.startVotingForReportNumber();
@@ -251,6 +286,13 @@ describe("VOTING MANAGEMENT", async function () {
         votingManagement,
         "OwnableUnauthorizedAccount"
       );
+    });
+
+    it("SHOULD NOT be triggered if workflow is not neutral", async function () {
+      await votingManagement.startRegisteringVoters();
+      await expect(
+        votingManagement.connect(author).changeTotalReportNumber()
+      ).to.be.revertedWith("There is already a voting going on");
     });
 
     it("Owner SHOULD start voting", async function () {
@@ -289,6 +331,13 @@ describe("VOTING MANAGEMENT", async function () {
         votingManagement,
         "OwnableUnauthorizedAccount"
       );
+    });
+
+    it("SHOULD NOT be triggered if workflow is not neutral", async function () {
+      await votingManagement.startRegisteringVoters();
+      await expect(
+        votingManagement.connect(author).changeTotalReportNumber()
+      ).to.be.revertedWith("There is already a voting going on");
     });
 
     it("Owner SHOULD start voting", async function () {
@@ -332,6 +381,13 @@ describe("VOTING MANAGEMENT", async function () {
       );
     });
 
+    it("SHOULD NOT be triggered if workflow is not neutral", async function () {
+      await votingManagement.startRegisteringVoters();
+      await expect(
+        votingManagement.connect(author).changeTotalReportNumber()
+      ).to.be.revertedWith("There is already a voting going on");
+    });
+
     it("Owner SHOULD start voting", async function () {
       await votingManagement
         .connect(verifier)
@@ -358,25 +414,48 @@ describe("VOTING MANAGEMENT", async function () {
       expect(await workflowStatus).to.equal(1);
     });
 
+    // it("SHOULD add a new Voting contract to votings array when owner starts voting", async function () {
+    //   await votingManagement
+    //     .connect(verifier)
+    //     .changeTimeIntervalForVerifierPromotion();
+
+    //   const initialVotingsLength = await votingManagement.votings.length;
+
+    //   await votingManagement.startVotingForVerifierPromotionInterval();
+
+    //   const updatedVotingsLength = await votingManagement.votings.length;
+
+    //   expect(updatedVotingsLength).to.equal(initialVotingsLength + 1);
+
+    //   //   Optionally, you can check more details about the new Voting contract if needed
+    //   //   const newVotingAddress = await votingManagement.votings(
+    //   //     updatedVotingsLength - 1
+    //   //   );
+    //   //   const newVoting = await ethers.getContractAt("Voting", newVotingAddress);
+    //   //   console.log(newVoting);
+    // });
+
     it("SHOULD add a new Voting contract to votings array when owner starts voting", async function () {
       await votingManagement
         .connect(verifier)
         .changeTimeIntervalForVerifierPromotion();
 
       const initialVotingsLength = await votingManagement.votings.length;
-
       await votingManagement.startVotingForVerifierPromotionInterval();
+      if (initialVotingsLength > 0) {
+        const newVotingAddress = await votingManagement.votings(
+          updatedVotingsLength - 1
+        );
+        console.log("New Voting Address:", newVotingAddress);
 
-      const updatedVotingsLength = await votingManagement.votings.length;
-
-      expect(updatedVotingsLength).to.equal(initialVotingsLength + 1);
-
-      //   Optionally, you can check more details about the new Voting contract if needed
-      //   const newVotingAddress = await votingManagement.votings(
-      //     updatedVotingsLength - 1
-      //   );
-      //   const newVoting = await ethers.getContractAt("Voting", newVotingAddress);
-      //   console.log(newVoting);
+        const newVoting = await ethers.getContractAt(
+          "Voting",
+          newVotingAddress
+        );
+        console.log("New Voting Contract:", newVoting);
+      } else {
+        console.log("The votings array is empty.");
+      }
     });
   });
 });

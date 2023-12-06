@@ -9,7 +9,7 @@ import { readContract } from "@wagmi/core";
 // import { useAccount } from "wagmi";
 
 // Contract's information
-import { abi, contractAddress } from "@/constants/index";
+import { Voting_Abi, contractAddress } from "@/constants/index";
 
 // React Styled Components
 import { Flex } from "./Styles/Flex.styled";
@@ -29,12 +29,11 @@ const GetterProposal = () => {
     try {
       const data = await readContract({
         address: contractAddress,
-        abi: abi,
-        functionName: "getOneProposal",
+        abi: Voting_Abi,
+        functionName: "getProposals",
         args: [proposalId],
       });
       setContractData(data);
-      console.log(contractData.voteCount);
     } catch (err) {
       alert(err.message);
     }
@@ -61,7 +60,7 @@ const GetterProposal = () => {
           <ul>
             <H2>Proposal Information </H2>
             <li>
-              <strong>Description:</strong> {contractData.description}
+              <strong>Description:</strong> {contractData.num}
             </li>
             <li>
               <strong>Vote Count:</strong> {contractData.voteCount.toString()}
