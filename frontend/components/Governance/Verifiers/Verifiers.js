@@ -17,50 +17,52 @@ import { usePublicClient } from "wagmi";
 import { hardhat } from "viem/chains";
 
 // Contract's information
-import { Voting_Abi, contractAddress_Voting } from "@/constants/index";
+import { Voting_Abi, Dao_Abi, contractAddress_Voting } from "@/constants/index";
 
-import { Flex } from "./Styles/Flex.styled";
-import { H2 } from "./Styles/H2.styled";
-import { Input } from "./Styles/Input.styled";
-import { Button } from "./Styles/Button.styled";
-import { Label } from "./Styles/Label.styled";
+import { Flex } from "../../Voting/Styles/Flex.styled";
+import { H2 } from "../../Voting/Styles/H2.styled";
+import { Input } from "../../Voting/Styles/Input.styled";
+import { Button } from "../../Voting/Styles/Button.styled";
+import { Label } from "../../Voting/Styles/Label.styled";
 
-const Whitelist = () => {
+const Verifiers = () => {
   // Voter Information
-  const [voter, setVoter] = useState("");
+  const [verifier, setVerifier] = useState("");
 
   // Wagmi function / client creation for event listenning
   const client = usePublicClient();
 
   // Event information
-  const [voterRegisteredEvents, setVoterRegisteredEvents] = useState([]);
+  const [verifierRegisteredEvents, setverifierRegisteredEvents] = useState([]);
 
   // Event handling function
-  const getVoterRegisteredEvents = async () => {
+  const getVerifierRegisteredEvents = async () => {
     try {
       // get.Logs from viem
       const logs = await client.getLogs({
         address: contractAddress_Voting,
-        event: parseAbiItem("event VoterRegistered(address voterAddress)"),
+        event: parseAbiItem(
+          "event VerifierCreated(address indexed verifier, uint256 date)"
+        ),
         fromBlock: 0n,
         toBlock: "latest",
       });
 
       // Mise à jour du state avec les événements VoterRegistered
-      setVoterRegisteredEvents(logs.map((log) => log.args.voterAddress));
+      setverifierRegisteredEvents(logs.map((log) => log.args.verifier));
     } catch (err) {
       alert(err.message);
     }
   };
 
   // Fonction pour ajouter un électeur
-  const addVoter = async () => {
+  const createverifier = async () => {
     try {
       const { request } = await prepareWriteContract({
-        address: contractAddress,
-        abi: Voting_Abi,
-        functionName: "addVoter",
-        args: [voter],
+        address: contractAddress_Voting,
+        abi: Dao_Abi,
+        functionName: "createVerifier",
+        args: [verifier],
       });
 
       const { hash } = await writeContract(request);
@@ -68,7 +70,9 @@ const Whitelist = () => {
         hash: hash,
       });
 
-      getVoterRegisteredEvents();
+      console.log(data);
+
+      getVerifierRegisteredEvents();
     } catch (err) {
       alert(err.message);
     }
@@ -76,30 +80,30 @@ const Whitelist = () => {
 
   // Utilisation de useEffect pour s'abonner aux événements lors du montage initial
   useEffect(() => {
-    getVoterRegisteredEvents();
+    getVerifierRegisteredEvents();
   }, []);
 
   return (
     <Label>
-      <H2>Add Voter</H2>
+      <H2>Add verifier</H2>
       <Flex>
         <Input
-          placeholder="Enter a voter address"
-          value={voter}
-          onChange={(e) => setVoter(e.target.value)}
+          placeholder="Enter an address"
+          value={verifier}
+          onChange={(e) => setVerifier(e.target.value)}
         />
-        <Button type="button" onClick={addVoter}>
+        <Button type="button" onClick={createverifier}>
           Submit
         </Button>
       </Flex>
 
-      {voterRegisteredEvents ? (
+      {verifierRegisteredEvents ? (
         <div>
           <ul>
-            {voterRegisteredEvents &&
-              voterRegisteredEvents.map((address, index) => (
+            {verifierRegisteredEvents &&
+              verifierRegisteredEvents.map((address, index) => (
                 <li key={index}>
-                  <span>Added Voter Address : </span>
+                  <span>Added verifier Address : </span>
                   {address}
                 </li>
               ))}
@@ -110,4 +114,4 @@ const Whitelist = () => {
   );
 };
 
-export default Whitelist;
+export default Verifiers;

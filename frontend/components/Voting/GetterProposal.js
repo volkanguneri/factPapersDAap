@@ -9,7 +9,7 @@ import { readContract } from "@wagmi/core";
 // import { useAccount } from "wagmi";
 
 // Contract's information
-import { Voting_Abi, contractAddress } from "@/constants/index";
+import { Voting_Abi, contractAddress_Voting } from "@/constants/index";
 
 // React Styled Components
 import { Flex } from "./Styles/Flex.styled";
@@ -28,7 +28,7 @@ const GetterProposal = () => {
   const getProposal = async () => {
     try {
       const data = await readContract({
-        address: contractAddress,
+        address: contractAddress_Voting,
         abi: Voting_Abi,
         functionName: "getProposals",
         args: [proposalId],

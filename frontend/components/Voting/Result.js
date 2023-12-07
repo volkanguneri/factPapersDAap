@@ -7,7 +7,7 @@ import { useState } from "react";
 import { readContract } from "@wagmi/core";
 
 // Importations nécessaires
-import { Voting_Abi, contractAddress } from "../../constants/index";
+import { Voting_Abi, contractAddress_Voting } from "../../constants/index";
 
 // Styled Components
 import { H2 } from "./Styles/H2.styled";
@@ -21,7 +21,7 @@ const Result = () => {
   const displayResult = async () => {
     try {
       const data = await readContract({
-        address: contractAddress,
+        address: contractAddress_Voting,
         abi: Voting_Abi,
         functionName: "winningProposalID",
       });

@@ -11,7 +11,7 @@ contract Dao is Ownable {
 
     uint256 public VrequiredReportsForVerifierPromotion = 10;
     uint256 public VrequiredVerificationsForAuthorPromotion = 20;
-    uint256 public VtimeIntervalForVerifierPromotion = 6 * 30 * 24 * 60 * 60; // 12 months in seconds;
+    uint256 public VtimeIntervalForVerifierPromotion = 6 * 30 * 24 * 60 * 60; // 6 months in seconds;
     uint256 public VtimeIntervalForAuthorPromotion = 12 * 30 * 24 * 60 * 60; // 12 months in seconds
 
     uint256 public numberOfAuthors;
@@ -47,8 +47,8 @@ contract Dao is Ownable {
 
     // Events
 
-    event AuthorCreated(address indexed author, bool isAuthor, uint256 date);
-    event VerifierCreated(address indexed verifier, bool isVerier, uint256 date);
+    event AuthorCreated(address indexed _author, uint256 date);
+    event VerifierCreated(address indexed _verifier, uint256 date);
     event AuthorBanned(address _author);
     event VerifierBanned(address _verifier);
     event RegisteredReaderBanned(address _registeredReaderBanned);
@@ -62,18 +62,18 @@ contract Dao is Ownable {
     _;
 }
     // Whitelisted members
-    function createAuthor(address author) external onlyOwner {
-        require(!authors[author].isAuthor, "Author already exists");
-        authors[author] = Author(true, 0);
+    function createAuthor(address _author) external onlyOwner {
+        require(!authors[_author].isAuthor, "Author already exists");
+        authors[_author] = Author(true, 0);
         numberOfAuthors++;
-        emit AuthorCreated(msg.sender, true, block.timestamp);
+        emit AuthorCreated(_author, block.timestamp);
     }
 
     function createVerifier(address verifier) external onlyOwner {
         require(!verifiers[verifier].isVerifier, "Verifier already exists");
         verifiers[verifier] = Verifier(true, block.timestamp, 0);
         numberOfVerifiers++;
-        emit VerifierCreated(msg.sender, true, block.timestamp);
+        emit VerifierCreated(msg.sender, block.timestamp);
     }
 
     // To ban author

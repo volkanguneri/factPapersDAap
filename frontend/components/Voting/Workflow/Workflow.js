@@ -5,7 +5,7 @@ import { useState } from "react";
 
 // Wagmi
 import { prepareWriteContract, writeContract } from "@wagmi/core";
-import { Voting_Abi, contractAddress } from "@/constants/index";
+import { Voting_Abi, contractAddress_Voting } from "@/constants/index";
 
 // Styled Components
 import { StyledWorkflow, Button, State } from "./Workflow.styled";
@@ -16,7 +16,7 @@ const Workflow = () => {
   const startProposalsRegistering = async () => {
     try {
       const { request } = await prepareWriteContract({
-        address: contractAddress,
+        address: contractAddress_Voting,
         abi: Voting_Abi,
         functionName: "startProposalsRegistering",
       });

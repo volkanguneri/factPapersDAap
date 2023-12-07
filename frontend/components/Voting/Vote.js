@@ -12,7 +12,7 @@ import {
 // import { useAccount } from "wagmi";
 
 // Contract's information
-import { Voting_Abi, contractAddress } from "@/constants/index";
+import { Voting_Abi, contractAddress_Voting } from "@/constants/index";
 
 import { Flex } from "./Styles/Flex.styled";
 import { H2 } from "./Styles/H2.styled";
@@ -26,7 +26,7 @@ const Vote = () => {
   const setVote = async () => {
     try {
       const { request } = await prepareWriteContract({
-        address: contractAddress,
+        address: contractAddress_Voting,
         abi: Voting_Abi,
         functionName: "setVote",
         args: [proposalId],

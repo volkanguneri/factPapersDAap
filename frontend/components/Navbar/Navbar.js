@@ -2,28 +2,19 @@
 
 import { StyledNavbar, StyledLinks } from "./Navbar.styled";
 
-const Menu = () => {
+const Navbar = () => {
   return (
     <StyledNavbar role="navigation">
       <ul>
         <li>
-          <StyledLinks href="#">Articles</StyledLinks>
-        </li>
-        <li>
-          <StyledLinks href="#">Verifications</StyledLinks>
-        </li>
-        <li>
-          <StyledLinks href="#">Rapports</StyledLinks>
-        </li>
-        <li>
-          <StyledLinks href="#">Objection</StyledLinks>
-        </li>
-        <li>
           <StyledLinks href="#">Gouvernance</StyledLinks>
+        </li>
+        <li>
+          <StyledLinks href="#">Voting</StyledLinks>
         </li>
       </ul>
     </StyledNavbar>
   );
 };
 
-export default Menu;
+export default Navbar;

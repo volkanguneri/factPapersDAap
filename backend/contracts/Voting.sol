@@ -73,11 +73,7 @@ contract Voting is Ownable, Dao {
     constructor(string memory _variableToChange) {
         variableToChange = _variableToChange;
     }
-
-     // constructor(address _addr) Ownable(msg.sender) {
-    //     voting = Voting(_addr);
-    // }
-
+    
 
     modifier onlyVoters() {
         require(voters[msg.sender].isRegistered, "You're not a voter");
@@ -194,7 +190,6 @@ contract Voting is Ownable, Dao {
         emit WorkflowStatusChange(WorkflowStatus.RegisteringProposals, WorkflowStatus.VotingSessionOpen);
     }
 
-   
     function changeTotalReportNumber() external onlyAuthorOrVerifier {
         require(workflowStatus == WorkflowStatus.NeutralStatus, "There is already a voting going on");
         require(!alreadyIncrementedRN[msg.sender], "You've already asked for a new min report number for promotion");

@@ -89,7 +89,7 @@ describe("DAO", async function () {
       const timestampTolerance = 100;
       await expect(dao.createAuthor(author.address))
         .to.emit(dao, "AuthorCreated")
-        .withArgs(owner.address, true, (actualTimestamp) => {
+        .withArgs(author.address, (actualTimestamp) => {
           console.log("current time stamp: ", currentTimestamp);
           console.log("actual time stamp: ", actualTimestamp);
           return (
@@ -124,7 +124,7 @@ describe("DAO", async function () {
       const timestampTolerance = 100;
       await expect(dao.createVerifier(verifier.address))
         .to.emit(dao, "VerifierCreated")
-        .withArgs(owner.address, true, (actualTimestamp) => {
+        .withArgs(owner.address, (actualTimestamp) => {
           console.log("current: ", currentTimestamp);
           console.log("actual: ", actualTimestamp);
           return (

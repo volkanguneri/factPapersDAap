@@ -1,4 +1,3 @@
-// // SPDX-License-Identifier: GPL-3.0
 // pragma solidity ^0.8.22;
 
 // import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
@@ -281,7 +280,7 @@
 // // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 
-// // SPDX-License-Identifier: GPL-3.0
+
 // pragma solidity ^0.8.22;
 
 // import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";

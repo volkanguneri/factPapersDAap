@@ -6,7 +6,9 @@ export const StyledHeader = styled.header`
   justify-content: center;
   align-items: center;
   flex-direction: row;
-  margin-bottom: 2rem;
+  margin-top: 2em;
+  margin-bottom: 5em;
+  padding-inline: 15em;
   width: 100%;
 `;
 export const StyledLogo = styled.h1`
