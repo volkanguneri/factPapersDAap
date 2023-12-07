@@ -48,8 +48,11 @@ const Verifiers = () => {
         toBlock: "latest",
       });
 
-      // Mise à jour du state avec les événements VoterRegistered
       setverifierRegisteredEvents(logs.map((log) => log.args.verifier));
+      let lastEvent = await verifierRegisteredEvents[
+        verifierRegisteredEvents.length - 1
+      ];
+      alert("Added verifier address : " + lastEvent);
     } catch (err) {
       alert(err.message);
     }
@@ -69,8 +72,6 @@ const Verifiers = () => {
       const data = await waitForTransaction({
         hash: hash,
       });
-
-      console.log(data);
 
       getVerifierRegisteredEvents();
     } catch (err) {
@@ -96,20 +97,6 @@ const Verifiers = () => {
           Submit
         </Button>
       </Flex>
-
-      {verifierRegisteredEvents ? (
-        <div>
-          <ul>
-            {verifierRegisteredEvents &&
-              verifierRegisteredEvents.map((address, index) => (
-                <li key={index}>
-                  <span>Added verifier Address : </span>
-                  {address}
-                </li>
-              ))}
-          </ul>
-        </div>
-      ) : null}
     </Label>
   );
 };

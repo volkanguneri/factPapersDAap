@@ -46,8 +46,9 @@ const BanAuthor = () => {
         toBlock: "latest",
       });
 
-      // Mise à jour du state avec les événements VoterRegistered
-      setBannedAuthorEvents(logs.map((log) => log.args.author));
+      setBannedAuthorEvents(logs.map((log) => log.args._author));
+      let lastEvent = await bannedAuthorEvents[bannedAuthorEvents.length - 1];
+      alert("Banned author address : " + lastEvent);
     } catch (err) {
       alert(err.message);
     }
@@ -91,20 +92,6 @@ const BanAuthor = () => {
           Submit
         </Button>
       </Flex>
-
-      {bannedAuthorEvents ? (
-        <div>
-          <ul>
-            {bannedAuthorEvents &&
-              bannedAuthorEvents.map((address, index) => (
-                <li key={index}>
-                  <span>Banned Author Address : </span>
-                  {address}
-                </li>
-              ))}
-          </ul>
-        </div>
-      ) : null}
     </Label>
   );
 };

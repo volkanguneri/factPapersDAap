@@ -46,8 +46,11 @@ const BanVerifier = () => {
         toBlock: "latest",
       });
 
-      // Mise à jour du state avec les événements VoterRegistered
-      setBannedVerifierEvents(logs.map((log) => log.args.bannedVerifier));
+      setBannedVerifierEvents(logs.map((log) => log.args._verifier));
+      let lastEvent = await bannedVerifierEvents[
+        bannedVerifierEvents.length - 1
+      ];
+      alert("Banned verifier address : " + lastEvent);
     } catch (err) {
       alert(err.message);
     }
@@ -66,8 +69,6 @@ const BanVerifier = () => {
       const data = await waitForTransaction({
         hash: hash,
       });
-
-      console.log(data);
 
       getBannedVerifierEvents();
     } catch (err) {
@@ -93,20 +94,6 @@ const BanVerifier = () => {
           Submit
         </Button>
       </Flex>
-
-      {bannedVerifierEvents ? (
-        <div>
-          <ul>
-            {bannedVerifierEvents &&
-              bannedVerifierEvents.map((address, index) => (
-                <li key={index}>
-                  <span>Banned Verifier Address : </span>
-                  {address}
-                </li>
-              ))}
-          </ul>
-        </div>
-      ) : null}
     </Label>
   );
 };

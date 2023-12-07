@@ -48,8 +48,11 @@ const Authors = () => {
         toBlock: "latest",
       });
 
-      // Mise à jour du state avec les événements VoterRegistered
       setAuthorRegisteredEvents(logs.map((log) => log.args.author));
+      let lastEvent = await authorRegisteredEvents[
+        authorRegisteredEvents.length - 1
+      ];
+      alert("Added author address : " + lastEvent);
     } catch (err) {
       alert(err.message);
     }
@@ -94,20 +97,6 @@ const Authors = () => {
           Submit
         </Button>
       </Flex>
-
-      {authorRegisteredEvents ? (
-        <div>
-          <ul>
-            {authorRegisteredEvents &&
-              authorRegisteredEvents.map((address, index) => (
-                <li key={index}>
-                  <span>Added Author Address : </span>
-                  {address}
-                </li>
-              ))}
-          </ul>
-        </div>
-      ) : null}
     </Label>
   );
 };
