@@ -52,7 +52,7 @@ const Authors = () => {
       let lastEvent = await authorRegisteredEvents[
         authorRegisteredEvents.length - 1
       ];
-      alert("Added author address : " + lastEvent);
+      //   alert("Added author address : " + lastEvent);
     } catch (err) {
       alert(err.message);
     }

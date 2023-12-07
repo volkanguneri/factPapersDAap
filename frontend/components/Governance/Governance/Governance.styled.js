@@ -9,10 +9,15 @@ export const StyledMain = styled.main`
   flex-direction: column;
   margin-bottom: 5rem;
   width: 100%;
+
+  strong {
+    width: 9em;
+  }
 `;
 
 export const StyledButton = styled.button`
-  margin-left: 2em;
+  margin-left: 3em;
+  margin-right: 5em;
   border-radius: 10%;
   padding: 0.3rem;
   // background: blue;
@@ -39,6 +44,11 @@ export const UlStyled = styled.ul`
 `;
 
 export const LiStyled = styled.li`
+  display: flex;
   color: darkblue;
   margin-bottom: 0.3em;
+`;
+
+export const PSTyled = styled.p`
+  width: 30rem;
 `;

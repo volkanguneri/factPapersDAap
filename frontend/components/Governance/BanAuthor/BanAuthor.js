@@ -48,7 +48,7 @@ const BanAuthor = () => {
 
       setBannedAuthorEvents(logs.map((log) => log.args._author));
       let lastEvent = await bannedAuthorEvents[bannedAuthorEvents.length - 1];
-      alert("Banned author address : " + lastEvent);
+      //   alert("Banned author address : " + lastEvent);
     } catch (err) {
       alert(err.message);
     }

@@ -52,7 +52,7 @@ const Verifiers = () => {
       let lastEvent = await verifierRegisteredEvents[
         verifierRegisteredEvents.length - 1
       ];
-      alert("Added verifier address : " + lastEvent);
+      //   alert("Added verifier address : " + lastEvent);
     } catch (err) {
       alert(err.message);
     }
@@ -86,7 +86,7 @@ const Verifiers = () => {
 
   return (
     <Label>
-      <H2>Add verifier</H2>
+      <H2>Add Verifier</H2>
       <Flex>
         <Input
           placeholder="Enter an address"

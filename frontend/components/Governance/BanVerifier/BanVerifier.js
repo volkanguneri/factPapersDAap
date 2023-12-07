@@ -50,7 +50,7 @@ const BanVerifier = () => {
       let lastEvent = await bannedVerifierEvents[
         bannedVerifierEvents.length - 1
       ];
-      alert("Banned verifier address : " + lastEvent);
+      //   alert("Banned verifier address : " + lastEvent);
     } catch (err) {
       alert(err.message);
     }
