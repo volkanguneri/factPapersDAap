@@ -103,14 +103,8 @@ const Workflow = () => {
         <Button type="button" onClick={startProposalsRegistering}>
           Proposals Registration Started
         </Button>
-        <Button type="button" onClick={endProposalsRegistering}>
-          Proposals Registration Ended
-        </Button>
         <Button type="button" onClick={startVotingSession}>
           Voting Session Started
-        </Button>
-        <Button type="button" onClick={endVotingSession}>
-          Voting Session Ended
         </Button>
         <Button type="button" onClick={tallyVote}>
           Votes Tallied

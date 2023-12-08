@@ -6,12 +6,13 @@ export const StyledHeader = styled.header`
   justify-content: center;
   align-items: center;
   flex-direction: row;
+  gap: 15em;
   margin-top: 2em;
-  margin-bottom: 5em;
-  padding-inline: 15em;
+  margin-bottom: 7.5em;
+  margin-left: 4em;
+  padding-inline: 6em;
   width: 100%;
 `;
 export const StyledLogo = styled.h1`
-  flex-grow: 1;
   color: blue;
 `;

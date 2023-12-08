@@ -2,16 +2,20 @@
 import styled from "styled-components";
 
 export const StyledNavbar = styled.nav`
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  flex-direction: column;
   // margin-bottom: 2rem;
   // width: 100%;
+
+  ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2em;
+  }
 `;
 export const StyledLinks = styled.a`
-  flex-grow: 1;
-  color: blue;
-  // list-style: none;
-  // background-color= "#f9f9f9";
+  color: #f9f9f9;
+  list-style: none;
+  background-color: blue;
+  padding: 0.6em;
+  border-radius: 25px;
 `;

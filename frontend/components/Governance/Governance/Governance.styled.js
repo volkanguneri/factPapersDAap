@@ -7,7 +7,7 @@ export const StyledMain = styled.main`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin-bottom: 5rem;
+  margin-bottom: 10rem;
   width: 100%;
 
   strong {
@@ -16,12 +16,12 @@ export const StyledMain = styled.main`
 `;
 
 export const StyledButton = styled.button`
-  margin-left: 3em;
+  margin-left: 4em;
   margin-right: 5em;
-  border-radius: 10%;
-  padding: 0.3rem;
-  // background: blue;
-  color: blue;
+  border-radius: 25px;
+  padding-inline: 0.5rem;
+  background: blue;
+  color: #f9f9f9;
   cursor: pointer;
   outline: 0;
   border: none;
@@ -35,12 +35,12 @@ export const H1Styled = styled.h1`
 
 export const H2Styled = styled.h3`
   color: blue;
-  margin-bottom: 2em;
+  margin-bottom: 3em;
 `;
 
 export const UlStyled = styled.ul`
   list-style: none;
-  margin-bottom: 5em;
+  margin-bottom: 8em;
 `;
 
 export const LiStyled = styled.li`
@@ -50,5 +50,5 @@ export const LiStyled = styled.li`
 `;
 
 export const PSTyled = styled.p`
-  width: 30rem;
+  width: 26rem;
 `;

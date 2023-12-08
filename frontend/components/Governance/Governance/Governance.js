@@ -118,6 +118,18 @@ const Governance = () => {
     } catch (err) {
       alert(err.message);
     }
+
+    try {
+      const data = await readContract({
+        address: contractAddress_Voting,
+        abi: Voting_Abi,
+        functionName: "requestNumberRN",
+      });
+      const dataString = data.toString();
+      setRequestNumberDataRN(dataString);
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   const changePromotionValues02 = async () => {
@@ -131,6 +143,18 @@ const Governance = () => {
       const data = await waitForTransaction({
         hash: hash,
       });
+    } catch (err) {
+      alert(err.message);
+    }
+
+    try {
+      const data = await readContract({
+        address: contractAddress_Voting,
+        abi: Voting_Abi,
+        functionName: "requestNumberVN",
+      });
+      const dataString = data.toString();
+      setRequestNumberDataVN(dataString);
     } catch (err) {
       alert(err.message);
     }
@@ -149,6 +173,18 @@ const Governance = () => {
     } catch (err) {
       alert(err.message);
     }
+
+    try {
+      const data = await readContract({
+        address: contractAddress_Voting,
+        abi: Voting_Abi,
+        functionName: "requestNumberIV",
+      });
+      const dataString = data.toString();
+      setRequestNumberDataIV(dataString);
+    } catch (err) {
+      alert(err.message);
+    }
   };
   const changePromotionValues04 = async () => {
     try {
@@ -164,6 +200,20 @@ const Governance = () => {
     } catch (err) {
       alert(err.message);
     }
+
+    try {
+      const data = await readContract({
+        address: contractAddress_Voting,
+        abi: Voting_Abi,
+        functionName: "requestNumberIA",
+      });
+
+      const dataString = data.toString();
+
+      setRequestNumberDataIA(dataString);
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   // :::::::::::::::::::::::::::::::::::::::READ REQUEST NUMBERS:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -175,7 +225,8 @@ const Governance = () => {
         abi: Voting_Abi,
         functionName: "requestNumberRN",
       });
-      setRequestNumberDataRN(data);
+      const dataString = data.toString();
+      setRequestNumberDataRN(dataString);
     } catch (err) {
       alert(err.message);
     }
@@ -185,7 +236,8 @@ const Governance = () => {
         abi: Voting_Abi,
         functionName: "requestNumberVN",
       });
-      setRequestNumberDataVN(data);
+      const dataString = data.toString();
+      setRequestNumberDataVN(dataString);
     } catch (err) {
       alert(err.message);
     }
@@ -196,8 +248,7 @@ const Governance = () => {
         functionName: "requestNumberIV",
       });
       const dataString = data.toString();
-      const inMonths = dataString / 60 / 60 / 24 / 30;
-      setRequestNumberDataIV(inMonths);
+      setRequestNumberDataIV(dataString);
     } catch (err) {
       alert(err.message);
     }
@@ -209,9 +260,8 @@ const Governance = () => {
       });
 
       const dataString = data.toString();
-      const inMonths = dataString / 60 / 60 / 24 / 30;
 
-      setRequestNumberDataIA(inMonths);
+      setRequestNumberDataIA(dataString);
     } catch (err) {
       alert(err.message);
     }
@@ -222,16 +272,17 @@ const Governance = () => {
   useEffect(() => {
     getPromotionValues();
     readRequestNumbers();
-  }, []); // Add requestNumberDataRN as a dependency
+  }, [
+    requestNumberDataRN,
+    requestNumberDataVN,
+    requestNumberDataIV,
+    requestNumberDataIA,
+  ]);
 
   return (
     <>
       <StyledMain>
-        <H1Styled>GOVERNANCE</H1Styled>
         <H2Styled>Promotion Rules</H2Styled>
-        {/* <button type="button" onClick={getPromotionValues}>
-          Get Promotion Rules
-        </button> */}
 
         {governanceData01 &&
           governanceData02 &&
@@ -241,47 +292,45 @@ const Governance = () => {
               <UlStyled>
                 <LiStyled>
                   <PSTyled>
-                    Minimum Required Report Number For Verifier Promotion: {""}
+                    Minimum Report Number For Verifier Promotion: {""}
                   </PSTyled>
                   <strong>{governanceData01.toString()}</strong>
                   <StyledButton type="button" onClick={changePromotionValues01}>
-                    Change
+                    Voting Request
                   </StyledButton>
                   <strong>{requestNumberDataRN}</strong>
                 </LiStyled>
 
                 <LiStyled>
                   <PSTyled>
-                    Minimum Required Verification Number For Author Promotion:{" "}
+                    Minimum Verification Number For Author Promotion:{" "}
                   </PSTyled>
                   <strong>{governanceData02.toString()}</strong>
                   <StyledButton type="button" onClick={changePromotionValues02}>
-                    Change
+                    Voting Request
                   </StyledButton>
                   <strong>{requestNumberDataVN}</strong>
                 </LiStyled>
                 <LiStyled>
                   <PSTyled>
                     {" "}
-                    Minimum Required Period For Verifier Promotion: {""}
+                    Minimum Period For Verifier Promotion: {""}
                   </PSTyled>
                   <strong>
                     {governanceData03} {""} Months
                   </strong>
                   <StyledButton type="button" onClick={changePromotionValues03}>
-                    Change
+                    Voting Request
                   </StyledButton>
                   <strong>{requestNumberDataIV}</strong>
                 </LiStyled>
                 <LiStyled>
-                  <PSTyled>
-                    Minimum Required Period For Author Promotion: {""}
-                  </PSTyled>
+                  <PSTyled>Minimum Period For Author Promotion: {""}</PSTyled>
                   <strong>
                     {governanceData04} {""} Months
                   </strong>
                   <StyledButton type="button" onClick={changePromotionValues04}>
-                    Change
+                    Voting Request
                   </StyledButton>
                   <strong>{requestNumberDataIA}</strong>
                 </LiStyled>

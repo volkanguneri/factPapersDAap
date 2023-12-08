@@ -2,8 +2,8 @@
 import styled from "styled-components";
 
 export const Button = styled.button`
-  border-radius: 10%;
-  padding: 0.8rem;
+  border-radius: 25px;
+  padding: 0.7rem;
   background: blue;
   color: #fff;
   cursor: pointer;
