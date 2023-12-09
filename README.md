@@ -1,52 +1,61 @@
-DAO Governance System
-A decentralized governance system built on the Ethereum blockchain for managing promotions and key parameters using smart contracts.
+**FactPapers: Decentralized Journalism Application README**
 
-Table of Contents
-Introduction
-Technology Stack
-Smart Contracts
-Dao.sol
-Voting.sol
-Getting Started
-Local Development
-Testnet Deployment
-Usage
-Contributing
-License
-Introduction
-Decentralized Autonomous Organizations (DAOs) are at the forefront of decentralized governance. This DAO governance system allows a community to manage promotion rules dynamically through voting. Key parameters, such as required reports for verifier promotion and verification numbers for author promotion, can be modified via a transparent voting process.
+**Table of Contents:**
 
-Technology Stack
-Smart Contracts: Solidity
-Web Frontend: Next.js, Wagmi, Viem, RainbowKit, Styled-Components
-Testing & Deployment: Hardhat, OpenZeppelin
-Environment Management: Dotenv
-Smart Contracts
-Dao.sol
+1. [Introduction](#introduction)
+2. [Technology Stack](#technology-stack)
+3. [Smart Contracts](#smart-contracts)
+   - [Dao.sol](#daosol)
+   - [Voting.sol](#votingsol)
+4. [Getting Started](#getting-started)
+   - [Local Development](#local-development)
+   - [Testnet Deployment](#testnet-deployment)
+5. [Usage](#usage)
+6. [Contributing](#contributing)
+7. [License](#license)
+
+**Introduction**
+FactPapers is a decentralized journalism application with self-governance facilitated through a Decentralized Autonomous Organization (DAO). The current focus of the DAO is on the final project, and implementation is underway.
+
+**Technology Stack**
+
+- **Smart Contracts:** Solidity
+- **Web Frontend:** Next.js, Wagmi, Viem, RainbowKit, Styled-Components
+- **Testing & Deployment:** Hardhat, OpenZeppelin
+- **Environment Management:** Dotenv
+
+**Smart Contracts**
+
+**Dao.sol**
 The Dao contract represents the DAO structure with roles for authors, verifiers, and readers. Owners can manage whitelisted members, create, and ban authors or verifiers. This contract also includes rules for promotions that can be modified by the community through voting.
 
-Voting.sol
+**Voting.sol**
 The Voting contract extends the functionality of the Dao contract, adding a voting system for proposals and workflow management. It allows the owner to initiate voting sessions, register voters, propose changes, and tally votes. The contract handles various states such as registering voters, proposing changes, and conducting voting sessions.
 
-Getting Started
-Local Development
+**Getting Started**
+
+**Local Development**
 
 1. Clone the repository:
-   git clone <https://github.com/volkanguneri/factPapersDAap.git>
+
+   ```bash
+   git clone https://github.com/volkanguneri/factPapersDAap.git
+
+   ```
 
 2. Install dependencies:
-   cd <frontend>
+   cd frontend
    npm install
-
-   cd <backend>
+   cd backend
    yarn install
 
 3. Create a .env file and set environment variables:
    INFURA_URL=<your_infura_url>
    PRIVATE_KEY=<your_private_key>
 
-4. Compile and deploy smart contracts locally:
+4. Compile, test, and deploy smart contracts locally:
    yarn hardhat compile
+   yarn hardhat coverage
    yarn hardhat node
    yarn hardhat run scripts/deploy.js --network localhost
 
@@ -55,10 +64,10 @@ Local Development
 
 6. Open your browser and visit http://localhost:3000.
 
-Testnet Deployment
-For testnet deployment, replace the .env variables with your testnet details and run the deployment script:
+   Testnet Deployment
 
-yarn hardhat run scripts/deploy.js --network sepolia
+   For testnet deployment, replace the .env variables with your testnet details and run the deployment script:
+   yarn hardhat run scripts/deploy.js --network sepolia
 
 Usage
 Access the web application at http://localhost:3000 (for local development).
