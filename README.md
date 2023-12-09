@@ -60,25 +60,25 @@ The Voting contract extends the functionality of the Dao contract, adding a voti
 
 3. Create a .env file and set environment variables:
 
-````bash
- INFURA_URL=<your_infura_url>
- PRIVATE_KEY=<your_private_key>
-    ```
+   ```bash
+   INFURA_URL=<your_infura_url>
+   PRIVATE_KEY=<your_private_key>
+   ```
 
 4. Compile, test, and deploy smart contracts locally:
 
- ```bash
- yarn hardhat compile
-````
+   ```bash
+   yarn hardhat compile
+   ```
 
-```bash
-yarn hardhat coverage
-```
+   ```bash
+   yarn hardhat coverage
+   ```
 
-```bash
-yarn hardhat node
-yarn hardhat run scripts/deploy.js --network localhost
-```
+   ```bash
+   yarn hardhat node
+   yarn hardhat run scripts/deploy.js --network localhost
+   ```
 
 5. Start the web application:
 
