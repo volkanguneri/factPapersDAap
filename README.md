@@ -1,4 +1,4 @@
-# **FactPapers: Decentralized Fact-Checking Jornalisme Application**
+## **FactPapers: Decentralized Fact-Checking Jornalisme Application**
 
 ## **Table of Contents:**
 
@@ -77,6 +77,9 @@ The Voting contract extends the functionality of the Dao contract, adding a voti
 
    ```bash
    yarn hardhat node
+   ```
+
+   ```bash
    yarn hardhat run scripts/deploy.js --network localhost
    ```
 
@@ -91,7 +94,10 @@ The Voting contract extends the functionality of the Dao contract, adding a voti
    Testnet Deployment
 
    For testnet deployment, replace the .env variables with your testnet details and run the deployment script:
+
+   ```bash
    yarn hardhat run scripts/deploy.js --network sepolia
+   ```
 
 ## **Usage**
 
