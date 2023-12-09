@@ -42,7 +42,7 @@ const Verifiers = () => {
       const logs = await client.getLogs({
         address: contractAddress_Voting,
         event: parseAbiItem(
-          "event VerifierCreated(address indexed verifier, uint256 date)"
+          "event VerifierCreated(address indexed _verifier, uint256 date)"
         ),
         fromBlock: 0n,
         toBlock: "latest",
@@ -52,7 +52,7 @@ const Verifiers = () => {
       let lastEvent = await verifierRegisteredEvents[
         verifierRegisteredEvents.length - 1
       ];
-      //   alert("Added verifier address : " + lastEvent);
+      alert("Added verifier address : " + lastEvent);
     } catch (err) {
       alert(err.message);
     }
@@ -79,10 +79,9 @@ const Verifiers = () => {
     }
   };
 
-  // Utilisation de useEffect pour s'abonner aux événements lors du montage initial
-  useEffect(() => {
-    getVerifierRegisteredEvents();
-  }, []);
+  // useEffect(() => {
+  //   getVerifierRegisteredEvents();
+  // }, []);
 
   return (
     <Label>

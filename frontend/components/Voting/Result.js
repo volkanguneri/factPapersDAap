@@ -13,6 +13,8 @@ import { Voting_Abi, contractAddress_Voting } from "../../constants/index";
 import { H2 } from "./Styles/H2.styled";
 import { Button } from "./Styles/Button.styled";
 import { Label } from "./Styles/Label.styled";
+import { UlStyled } from "./Styles/Ul.styled";
+import { ResultButton } from "./Styles/ResultButton.styled";
 
 const Result = () => {
   const [winningProposalID, setWinningProposalID] = useState("");
@@ -23,7 +25,7 @@ const Result = () => {
       const data = await readContract({
         address: contractAddress_Voting,
         abi: Voting_Abi,
-        functionName: "winningProposalID",
+        functionName: "winningProposalId",
       });
       setWinningProposalID(data);
       getProposal(data);
@@ -35,11 +37,12 @@ const Result = () => {
   const getProposal = async (proposalId) => {
     try {
       const proposalData = await readContract({
-        address: contractAddress,
+        address: contractAddress_Voting,
         abi: Voting_Abi,
-        functionName: "getOneProposal",
+        functionName: "getProposals",
         args: [proposalId],
       });
+      // const { num, voteCount } = data;
 
       setProposal(proposalData);
     } catch (err) {
@@ -49,26 +52,25 @@ const Result = () => {
 
   return (
     <Label>
-      <Button type="button" onClick={displayResult}>
+      <ResultButton type="button" onClick={displayResult}>
         Result
-      </Button>
+      </ResultButton>
 
       {winningProposalID && (
-        <div>
-          <H2>Result</H2>
+        <>
           {proposal ? (
-            <ul>
+            <UlStyled>
               <li>
-                <strong>Description:</strong> {proposal.description.toString()}
+                <strong>Value:</strong> {proposal.num.toString()}
               </li>
               <li>
                 <strong>Vote Count:</strong> {proposal.voteCount.toString()}
               </li>
-            </ul>
+            </UlStyled>
           ) : (
             <p>Loading...</p>
           )}
-        </div>
+        </>
       )}
     </Label>
   );

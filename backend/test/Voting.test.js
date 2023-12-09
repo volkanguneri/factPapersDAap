@@ -142,7 +142,7 @@ describe("VOTING", async function () {
     it("SHOULD be genesis proposal", async function () {
       await voting.startProposalRegister();
       const [num, voteCount] = await voting.getProposals(0);
-      expect(num).to.equal(1234567890);
+      expect(num).to.equal(0);
     });
 
     it("Owner who registered himself as a voter should add proposals", async function () {
@@ -223,9 +223,9 @@ describe("VOTING", async function () {
       await voting.voterRegisters(voter1.address);
       await voting.voterRegisters(voter2.address);
       await voting.startProposalRegister();
-      const anyProposal_01 = 1;
-      const anyProposal_02 = 2;
-      const anyProposal_03 = 3;
+      const anyProposal_01 = 10;
+      const anyProposal_02 = 20;
+      const anyProposal_03 = 30;
       await voting.registerProposal(anyProposal_01);
       await voting.connect(voter1).registerProposal(anyProposal_02);
       await voting.connect(voter2).registerProposal(anyProposal_03);
@@ -243,6 +243,35 @@ describe("VOTING", async function () {
         voting.connect(voter1).tallyVote()
       ).to.be.revertedWithCustomError(voting, "OwnableUnauthorizedAccount");
     });
+
+    it("Should tally votes if no exaequo to get the winning ID", async function () {
+      await voting.startVotingSession();
+      await voting.vote(2);
+      await voting.tallyVote();
+      expect(await voting.winningProposalId()).to.equal(2);
+    });
+
+    it("Should tally votes if no exaequo to get the value", async function () {
+      await voting.startVotingSession();
+      await voting.vote(3);
+      await voting.connect(voter1).vote(3);
+      await voting.connect(voter2).vote(1);
+      await voting.tallyVote();
+      const _winningProposalId = await voting.winningProposalId();
+      const { num, voteCount } = await voting.getProposals(_winningProposalId);
+      expect(num).to.equal(30);
+    });
+
+    // it("Should revert if exaequo", async function () {
+    //   await voting.startVotingSession();
+    //   await voting.vote(3);
+    //   await voting.connect(voter1).vote(2);
+    //   await voting.tallyVote();
+    //   await expect(voting.tallyVote()).to.be.revertedWithCustomError(
+    //     voting,
+    //     "ExaequoNoWinner"
+    //   );
+    // });
 
     it("Should change workflow status to VotesTallied", async function () {
       await voting.startVotingSession();

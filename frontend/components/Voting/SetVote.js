@@ -12,7 +12,7 @@ import {
 // import { useAccount } from "wagmi";
 
 // Contract's information
-import { Voting_Abi, contractAddress_Voting } from "../../constants/index";
+import { Voting_Abi, contractAddress_Voting } from "@/constants/index";
 
 import { Flex } from "./Styles/Flex.styled";
 import { H2 } from "./Styles/H2.styled";
@@ -20,22 +20,22 @@ import { Input } from "./Styles/Input.styled";
 import { Button } from "./Styles/Button.styled";
 import { Label } from "./Styles/Label.styled";
 
-const Proposals = () => {
-  const [description, setDescription] = useState("");
+const SetVote = () => {
+  const [proposalId, setProposalId] = useState("");
 
-  const addProposal = async () => {
+  const setVote = async () => {
     try {
       const { request } = await prepareWriteContract({
         address: contractAddress_Voting,
         abi: Voting_Abi,
-        functionName: "addProposal",
-        args: [description],
+        functionName: "vote",
+        args: [proposalId],
       });
       const { hash } = await writeContract(request);
-      alert("Contract written");
       const data = await waitForTransaction({
         hash: hash,
       });
+      alert("Contract written");
     } catch (err) {
       alert(err.message);
     }
@@ -43,19 +43,20 @@ const Proposals = () => {
 
   return (
     <Label>
-      <H2>Add Proposal</H2>
+      <H2>Vote</H2>
       <Flex>
         <Input
-          placeholder="Enter a proposal"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Enter a proposal ID"
+          type="number"
+          value={proposalId}
+          onChange={(e) => setProposalId(e.target.value)}
+          style={{ appearance: "textfield" }}
         ></Input>
-        <Button type="button" onClick={addProposal}>
+        <Button type="button" onClick={setVote}>
           Submit
         </Button>
       </Flex>
     </Label>
   );
 };
-
-export default Proposals;
+export default SetVote;

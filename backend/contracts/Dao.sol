@@ -4,11 +4,15 @@ import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 
 pragma solidity ^0.8.22;
 
+/**
+ * @title Dao
+ * @dev This contract represents a DAO (Decentralized Autonomous Organization) with rules for promotion.
+ * @dev The eligible community can change values by voting on certain rules.
+ */
 
 contract Dao is Ownable {
 
     // DAO rules for promotion that the elligible community can change values by voting
-
     uint256 public VrequiredReportsForVerifierPromotion = 10;
     uint256 public VrequiredVerificationsForAuthorPromotion = 20;
     uint256 public VtimeIntervalForVerifierPromotion = 6 * 30 * 24 * 60 * 60; // 6 months in seconds;
@@ -39,14 +43,12 @@ contract Dao is Ownable {
 
    
     // Mappings
-
     mapping(address => Author) public authors;
     mapping(address => Verifier) public verifiers;
     mapping(address => RegisteredReader) public readers;
 
 
     // Events
-
     event AuthorCreated(address indexed _author, uint256 date);
     event VerifierCreated(address indexed _verifier, uint256 date);
     event AuthorBanned(address _author);
@@ -61,22 +63,37 @@ contract Dao is Ownable {
         require(authors[msg.sender].isAuthor || verifiers[msg.sender].isVerifier, "Only authors or verifiers can access!");
     _;
 }
-    // Whitelisted members
+    /**
+     * @dev Whitelisted members - Create an author with the specified address.
+     * @notice Only the owner can create an author.
+     * @param _author The address of the author to be created.
+     */
     function createAuthor(address _author) external onlyOwner {
         require(!authors[_author].isAuthor, "Author already exists");
+        require(!verifiers[_author].isVerifier, "Verifiers can not be author at the same time");
         authors[_author] = Author(true, 0);
         numberOfAuthors++;
         emit AuthorCreated(_author, block.timestamp);
     }
 
-    function createVerifier(address verifier) external onlyOwner {
-        require(!verifiers[verifier].isVerifier, "Verifier already exists");
-        verifiers[verifier] = Verifier(true, block.timestamp, 0);
+    /**
+     * @dev Whitelisted members - Create a verifier with the specified address.
+     * @notice Only the owner can create a verifier.
+     * @param _verifier The address of the verifier to be created.
+     */
+    function createVerifier(address _verifier) external onlyOwner {
+        require(!verifiers[_verifier].isVerifier, "Verifier already exists");
+        require(!authors[_verifier].isAuthor, "Verifier already exists");
+        verifiers[_verifier] = Verifier(true, block.timestamp, 0);
         numberOfVerifiers++;
-        emit VerifierCreated(msg.sender, block.timestamp);
+        emit VerifierCreated(_verifier, block.timestamp);
     }
 
-    // To ban author
+     /**
+     * @dev Whitelisted members - Ban an author with the specified address.
+     * @notice Only the owner can ban an author.
+     * @param _author The address of the author to be banned.
+     */
     function banAuthor(address _author) external onlyOwner{
         require(authors[_author].isAuthor, "Author not found");
         authors[_author].isAuthor = false; 
@@ -84,7 +101,11 @@ contract Dao is Ownable {
         emit AuthorBanned(_author);
     }
 
-    // To ban verifier
+    /**
+     * @dev Whitelisted members - Ban a verifier with the specified address.
+     * @notice Only the owner can ban a verifier.
+     * @param _verifier The address of the verifier to be banned.
+     */
     function banVerifier(address _verifier) external onlyOwner{
         require(verifiers[_verifier].isVerifier, "Verifier not found");
         verifiers[_verifier].isVerifier = false; 

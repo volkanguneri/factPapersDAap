@@ -7,7 +7,7 @@ export const StyledMain = styled.main`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin-bottom: 10rem;
+  margin-bottom: 8rem;
   width: 100%;
 
   strong {
@@ -16,7 +16,7 @@ export const StyledMain = styled.main`
 `;
 
 export const StyledButton = styled.button`
-  margin-left: 4em;
+  margin-left: 2em;
   margin-right: 5em;
   border-radius: 25px;
   padding-inline: 0.5rem;
@@ -40,7 +40,7 @@ export const H2Styled = styled.h3`
 
 export const UlStyled = styled.ul`
   list-style: none;
-  margin-bottom: 8em;
+  margin-bottom: 6em;
 `;
 
 export const LiStyled = styled.li`

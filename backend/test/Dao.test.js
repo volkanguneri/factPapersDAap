@@ -124,7 +124,7 @@ describe("DAO", async function () {
       const timestampTolerance = 100;
       await expect(dao.createVerifier(verifier.address))
         .to.emit(dao, "VerifierCreated")
-        .withArgs(owner.address, (actualTimestamp) => {
+        .withArgs(verifier.address, (actualTimestamp) => {
           console.log("current: ", currentTimestamp);
           console.log("actual: ", actualTimestamp);
           return (

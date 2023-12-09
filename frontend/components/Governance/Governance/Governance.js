@@ -50,6 +50,8 @@ const Governance = () => {
   const [requestNumberDataIV, setRequestNumberDataIV] = useState("");
   const [requestNumberDataIA, setRequestNumberDataIA] = useState("");
 
+  const [variableToChange, setVariableToChange] = useState("");
+
   // ::::::::::::::::::::::::::::::::: GET PROMOTION VALUES:::::::::::::::::::::::::::::::::::::::::::::::::::
 
   const getPromotionValues = async () => {
@@ -267,7 +269,118 @@ const Governance = () => {
     }
   };
 
-  // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  // ::::::::::::::::::::::::::::::::::::Start Voting Functions:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+  const startVotingForReportNumber = async () => {
+    try {
+      const { request } = await prepareWriteContract({
+        address: contractAddress_Voting,
+        abi: Voting_Abi,
+        functionName: "startVotingForReportNumber",
+      });
+      const { hash } = await writeContract(request);
+      const data = await waitForTransaction({
+        hash: hash,
+      });
+    } catch (err) {
+      alert(err.message);
+    }
+
+    // try {
+    //   const data = await readContract({
+    //     address: contractAddress_Voting,
+    //     abi: Voting_Abi,
+    //     functionName: "variableToChange",
+    //   });
+    //   setVariableToChange(data);
+    //   console.log(data);
+    // } catch (err) {
+    //   alert(err.message);
+    // }
+  };
+
+  const startVotingForVerificationNumber = async () => {
+    try {
+      const { request } = await prepareWriteContract({
+        address: contractAddress_Voting,
+        abi: Voting_Abi,
+        functionName: "startVotingForVerificationNumber",
+      });
+      const { hash } = await writeContract(request);
+      const data = await waitForTransaction({
+        hash: hash,
+      });
+    } catch (err) {
+      alert(err.message);
+    }
+
+    // try {
+    //   const data = await readContract({
+    //     address: contractAddress_Voting,
+    //     abi: Voting_Abi,
+    //     functionName: "requestNumberVN",
+    //   });
+    //   const dataString = data.toString();
+    //   setRequestNumberDataVN(dataString);
+    // } catch (err) {
+    //   alert(err.message);
+    // }
+  };
+  const startVotingForVerifierPromotionInterval = async () => {
+    try {
+      const { request } = await prepareWriteContract({
+        address: contractAddress_Voting,
+        abi: Voting_Abi,
+        functionName: "startVotingForVerifierPromotionInterval",
+      });
+      const { hash } = await writeContract(request);
+      const data = await waitForTransaction({
+        hash: hash,
+      });
+    } catch (err) {
+      alert(err.message);
+    }
+
+    // try {
+    //   const data = await readContract({
+    //     address: contractAddress_Voting,
+    //     abi: Voting_Abi,
+    //     functionName: "requestNumberIV",
+    //   });
+    //   const dataString = data.toString();
+    //   setRequestNumberDataIV(dataString);
+    // } catch (err) {
+    //   alert(err.message);
+  };
+  const startVotingForAuthorPromotionInterval = async () => {
+    try {
+      const { request } = await prepareWriteContract({
+        address: contractAddress_Voting,
+        abi: Voting_Abi,
+        functionName: "startVotingForAuthorPromotionInterval",
+      });
+      const { hash } = await writeContract(request);
+      const data = await waitForTransaction({
+        hash: hash,
+      });
+    } catch (err) {
+      alert(err.message);
+    }
+
+    // try {
+    //   const data = await readContract({
+    //     address: contractAddress_Voting,
+    //     abi: Voting_Abi,
+    //     functionName: "requestNumberIA",
+    //   });
+
+    //   const dataString = data.toString();
+
+    //   setRequestNumberDataIA(dataString);
+    // } catch (err) {
+    //   alert(err.message);
+    // }
+  };
 
   useEffect(() => {
     getPromotionValues();
@@ -299,6 +412,12 @@ const Governance = () => {
                     Voting Request
                   </StyledButton>
                   <strong>{requestNumberDataRN}</strong>
+                  <StyledButton
+                    type="button"
+                    onClick={startVotingForReportNumber}
+                  >
+                    Start Voting
+                  </StyledButton>
                 </LiStyled>
 
                 <LiStyled>
@@ -310,29 +429,49 @@ const Governance = () => {
                     Voting Request
                   </StyledButton>
                   <strong>{requestNumberDataVN}</strong>
+                  <StyledButton
+                    type="button"
+                    onClick={startVotingForVerificationNumber}
+                  >
+                    Start Voting
+                  </StyledButton>
                 </LiStyled>
+
                 <LiStyled>
                   <PSTyled>
                     {" "}
                     Minimum Period For Verifier Promotion: {""}
                   </PSTyled>
                   <strong>
-                    {governanceData03} {""} Months
+                    {governanceData03} {""} Mo
                   </strong>
                   <StyledButton type="button" onClick={changePromotionValues03}>
                     Voting Request
                   </StyledButton>
                   <strong>{requestNumberDataIV}</strong>
+                  <StyledButton
+                    type="button"
+                    onClick={startVotingForVerifierPromotionInterval}
+                  >
+                    Start Voting
+                  </StyledButton>
                 </LiStyled>
+
                 <LiStyled>
                   <PSTyled>Minimum Period For Author Promotion: {""}</PSTyled>
                   <strong>
-                    {governanceData04} {""} Months
+                    {governanceData04} {""} Mo
                   </strong>
                   <StyledButton type="button" onClick={changePromotionValues04}>
                     Voting Request
                   </StyledButton>
                   <strong>{requestNumberDataIA}</strong>
+                  <StyledButton
+                    type="button"
+                    onClick={startVotingForAuthorPromotionInterval}
+                  >
+                    Start Voting
+                  </StyledButton>
                 </LiStyled>
               </UlStyled>
             </>

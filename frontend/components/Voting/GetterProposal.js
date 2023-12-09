@@ -60,7 +60,7 @@ const GetterProposal = () => {
           <ul>
             <H2>Proposal Information </H2>
             <li>
-              <strong>Description:</strong> {contractData.num}
+              <strong>Value:</strong> {contractData.num.toString()}
             </li>
             <li>
               <strong>Vote Count:</strong> {contractData.voteCount.toString()}

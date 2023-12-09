@@ -8,7 +8,7 @@ export const StyledHeader = styled.header`
   flex-direction: row;
   gap: 15em;
   margin-top: 2em;
-  margin-bottom: 7.5em;
+  margin-bottom: 7em;
   margin-left: 4em;
   padding-inline: 6em;
   width: 100%;

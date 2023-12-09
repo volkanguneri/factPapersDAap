@@ -25,7 +25,7 @@ import { Input } from "./Styles/Input.styled";
 import { Button } from "./Styles/Button.styled";
 import { Label } from "./Styles/Label.styled";
 
-const Whitelist = () => {
+const AddVoter = () => {
   // Voter Information
   const [voter, setVoter] = useState("");
 
@@ -46,8 +46,11 @@ const Whitelist = () => {
         toBlock: "latest",
       });
 
-      // Mise à jour du state avec les événements VoterRegistered
       setVoterRegisteredEvents(logs.map((log) => log.args.voterAddress));
+      let lastEvent = await voterRegisteredEvents[
+        voterRegisteredEvents.length - 1
+      ];
+      // alert(lastEvent);
     } catch (err) {
       alert(err.message);
     }
@@ -57,9 +60,9 @@ const Whitelist = () => {
   const addVoter = async () => {
     try {
       const { request } = await prepareWriteContract({
-        address: contractAddress,
+        address: contractAddress_Voting,
         abi: Voting_Abi,
-        functionName: "addVoter",
+        functionName: "voterRegisters",
         args: [voter],
       });
 
@@ -74,7 +77,6 @@ const Whitelist = () => {
     }
   };
 
-  // Utilisation de useEffect pour s'abonner aux événements lors du montage initial
   useEffect(() => {
     getVoterRegisteredEvents();
   }, []);
@@ -92,22 +94,8 @@ const Whitelist = () => {
           Submit
         </Button>
       </Flex>
-
-      {voterRegisteredEvents ? (
-        <div>
-          <ul>
-            {voterRegisteredEvents &&
-              voterRegisteredEvents.map((address, index) => (
-                <li key={index}>
-                  <span>Added Voter Address : </span>
-                  {address}
-                </li>
-              ))}
-          </ul>
-        </div>
-      ) : null}
     </Label>
   );
 };
 
-export default Whitelist;
+export default AddVoter;

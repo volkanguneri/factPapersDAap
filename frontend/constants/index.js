@@ -16,6 +16,11 @@ export const Voting_Abi = [
     type: "constructor",
   },
   {
+    inputs: [],
+    name: "ExaequoNoWinner",
+    type: "error",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -56,14 +61,8 @@ export const Voting_Abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "author",
+        name: "_author",
         type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "isAuthor",
-        type: "bool",
       },
       {
         indexed: false,
@@ -139,14 +138,8 @@ export const Voting_Abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "verifier",
+        name: "_verifier",
         type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "isVerier",
-        type: "bool",
       },
       {
         indexed: false,
@@ -356,7 +349,7 @@ export const Voting_Abi = [
     inputs: [
       {
         internalType: "address",
-        name: "author",
+        name: "_author",
         type: "address",
       },
     ],
@@ -369,13 +362,31 @@ export const Voting_Abi = [
     inputs: [
       {
         internalType: "address",
-        name: "verifier",
+        name: "_verifier",
         type: "address",
       },
     ],
     name: "createVerifier",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "displayWinningProposal",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -673,6 +684,19 @@ export const Voting_Abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "variableToChange",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -728,19 +752,31 @@ export const Voting_Abi = [
     type: "function",
   },
   {
-    inputs: [
+    inputs: [],
+    name: "winningProposal",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "num",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "voteCount",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "winningProposalId",
+    outputs: [
       {
         internalType: "uint256",
         name: "",
         type: "uint256",
-      },
-    ],
-    name: "votings",
-    outputs: [
-      {
-        internalType: "contract Voting",
-        name: "",
-        type: "address",
       },
     ],
     stateMutability: "view",
@@ -808,7 +844,7 @@ export const Dao_Abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "author",
+        name: "_author",
         type: "address",
       },
       {
@@ -872,7 +908,7 @@ export const Dao_Abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "verifier",
+        name: "_verifier",
         type: "address",
       },
       {
@@ -991,7 +1027,7 @@ export const Dao_Abi = [
     inputs: [
       {
         internalType: "address",
-        name: "author",
+        name: "_author",
         type: "address",
       },
     ],
@@ -1004,7 +1040,7 @@ export const Dao_Abi = [
     inputs: [
       {
         internalType: "address",
-        name: "verifier",
+        name: "_verifier",
         type: "address",
       },
     ],

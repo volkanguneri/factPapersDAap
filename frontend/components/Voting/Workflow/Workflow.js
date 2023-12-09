@@ -1,47 +1,41 @@
 "use client";
 
 // React
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // Wagmi
-import { prepareWriteContract, writeContract } from "@wagmi/core";
+import { prepareWriteContract, writeContract, readContract } from "@wagmi/core";
 import { Voting_Abi, contractAddress_Voting } from "@/constants/index";
 
 // Styled Components
 import { StyledWorkflow, Button, State } from "./Workflow.styled";
 
 const Workflow = () => {
-  const [workflowStatus, setWorkflowStatus] = useState("Voters Registering");
+  const [workflowStatus, setWorkflowStatus] = useState("Voting is not open");
 
-  const startProposalsRegistering = async () => {
+  const startRegisteringVoters = async () => {
     try {
       const { request } = await prepareWriteContract({
         address: contractAddress_Voting,
         abi: Voting_Abi,
-        functionName: "startProposalsRegistering",
+        functionName: "startRegisteringVoters",
       });
 
       const { hash } = await writeContract(request);
-      alert("Contract written");
-
-      // Mettez à jour l'état
-      setWorkflowStatus("Proposals Registration Started");
     } catch (err) {
       alert(err.message);
     }
   };
-  const endProposalsRegistering = async () => {
+
+  const startProposalRegister = async () => {
     try {
       const { request } = await prepareWriteContract({
-        address: contractAddress,
-        abi: abi,
-        functionName: "endProposalsRegistering",
+        address: contractAddress_Voting,
+        abi: Voting_Abi,
+        functionName: "startProposalRegister",
       });
 
       const { hash } = await writeContract(request);
-      alert("Contract written");
-
-      setWorkflowStatus("Proposals Registration Ended");
     } catch (err) {
       alert(err.message);
     }
@@ -50,31 +44,12 @@ const Workflow = () => {
   const startVotingSession = async () => {
     try {
       const { request } = await prepareWriteContract({
-        address: contractAddress,
-        abi: abi,
+        address: contractAddress_Voting,
+        abi: Voting_Abi,
         functionName: "startVotingSession",
       });
 
       const { hash } = await writeContract(request);
-      alert("Contract written");
-
-      setWorkflowStatus("Voting Session Started");
-    } catch (err) {
-      alert(err.message);
-    }
-  };
-
-  const endVotingSession = async () => {
-    try {
-      const { request } = await prepareWriteContract({
-        address: contractAddress,
-        abi: abi,
-        functionName: "endVotingSession",
-      });
-
-      const { hash } = await writeContract(request);
-
-      setWorkflowStatus("Voting Session Ended");
     } catch (err) {
       alert(err.message);
     }
@@ -83,24 +58,65 @@ const Workflow = () => {
   const tallyVote = async () => {
     try {
       const { request } = await prepareWriteContract({
-        address: contractAddress,
-        abi: abi,
-        functionName: "tallyVotes",
+        address: contractAddress_Voting,
+        abi: Voting_Abi,
+        functionName: "tallyVote",
       });
 
       const { hash } = await writeContract(request);
-
-      setWorkflowStatus("Votes Tallied");
     } catch (err) {
       alert(err.message);
+    }
+  };
+
+  const readWorkflowStatus = async () => {
+    try {
+      const data = await readContract({
+        address: contractAddress_Voting,
+        abi: Voting_Abi,
+        functionName: "workflowStatus",
+      });
+      setWorkflowStatus(data);
+      console.log(data);
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  useEffect(() => {
+    readWorkflowStatus();
+
+    const intervalId = setInterval(readWorkflowStatus, 5000); // Appel toutes les 5 secondes, ajustez selon vos besoins
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
+
+  const renderWorkflowStatus = () => {
+    switch (workflowStatus) {
+      case 0:
+        return "No Voting Session Is Open Yet";
+      case 1:
+        return "Registering Voters";
+      case 2:
+        return "Proposals Registration Started";
+      case 3:
+        return "Voting Session is Open";
+      case 4:
+        return "Votes are Tallied";
+      default:
+        return "Unknown Workflow Status";
     }
   };
 
   return (
     <>
       <StyledWorkflow>
-        <Button type="button">Registering Voters</Button>
-        <Button type="button" onClick={startProposalsRegistering}>
+        <Button type="button" onClick={startRegisteringVoters}>
+          Registering Voters
+        </Button>
+        <Button type="button" onClick={startProposalRegister}>
           Proposals Registration Started
         </Button>
         <Button type="button" onClick={startVotingSession}>
@@ -111,7 +127,7 @@ const Workflow = () => {
         </Button>
       </StyledWorkflow>
 
-      <State>{workflowStatus}</State>
+      <State>{renderWorkflowStatus()}</State>
     </>
   );
 };

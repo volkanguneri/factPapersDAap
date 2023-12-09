@@ -1,9 +1,9 @@
 "use client";
 
-import Whitelist from "@/components/Voting/Whitelist";
-import Proposals from "@/components/Voting/Proposals";
+import AddVoter from "@/components/Voting/AddVoter";
+import AddProposal from "@/components/Voting/AddProposal";
 import Result from "@/components/Voting/Result";
-import Vote from "@/components/Voting/Vote";
+import SetVote from "@/components/Voting/SetVote";
 import GetterVoter from "@/components/Voting/GetterVoter";
 import GetterProposal from "@/components/Voting/GetterProposal";
 
@@ -13,11 +13,11 @@ import { StyledForm } from "@/components/Voting/Styles/Form.styled";
 const Form = () => {
   return (
     <StyledForm>
-      <Whitelist />
+      <AddVoter />
       <GetterVoter />
-      <Proposals />
+      <AddProposal />
       <GetterProposal />
-      <Vote />
+      <SetVote />
       <Result />
     </StyledForm>
   );
