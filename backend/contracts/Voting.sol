@@ -8,7 +8,6 @@ pragma solidity ^0.8.22;
 
 error ExaequoNoWinner();
 error NoWinner();
-// error NotExaequoProposal();
 
 contract Voting is Ownable, Dao {
 
@@ -30,15 +29,14 @@ contract Voting is Ownable, Dao {
     uint256 public requestNumberIV;
     uint256 public requestNumberIA;
 
-    // Timestamp for tracking workflow changes
+    
     uint256 workflowChangeTime;
-
     uint256 public winningProposalId;
-    Proposal public winningProposal;
     uint256 public numberOfVoters;
     uint256 public votingId;
 
-    Proposal[] proposals;
+    Proposal public winningProposal;
+    Proposal[] public proposals;
     mapping (address => Voter) private voters;
 
     // Mapping to track if a request has already been incremented
@@ -85,7 +83,7 @@ contract Voting is Ownable, Dao {
     */
 
     function voterRegisters(address _addr) external onlyOwner {
-        require(workflowStatus == WorkflowStatus.RegisteringVoters, "Voter registering is not permissed now");
+        require(workflowStatus == WorkflowStatus.RegisteringVoters, "Voter register session is not open or already finished");
         require(!voters[_addr].isRegistered, "Voter already added");
         require(_addr != address(0), "Address cannot be the zero address");
         
@@ -101,7 +99,7 @@ contract Voting is Ownable, Dao {
      */
 
     function registerProposal(uint256 _num) external onlyVoters {
-        require(workflowStatus == WorkflowStatus.RegisteringProposals, "Proposal registration session is not open");
+        require(workflowStatus == WorkflowStatus.RegisteringProposals, "Proposal registration session is not open or already finished");
         require(!voters[msg.sender].hasProposed, "You've already made a proposal");
         require(proposals.length < 1000, "The maximum proposal amount is reached");
         require(_num != 0, 'Proposal should not be 0');
@@ -152,7 +150,7 @@ contract Voting is Ownable, Dao {
      * @dev Function to tally the votes and determine the winning proposal.
      */
      function tallyVote() external onlyOwner {
-         require(workflowStatus == WorkflowStatus.VotingSessionOpen, "Voting session should be open");
+         require(workflowStatus == WorkflowStatus.VotingSessionOpen, "Voting session should be open before talling votes");
 
          uint _winningProposalId;
          bool exaequo = false;
@@ -174,6 +172,11 @@ contract Voting is Ownable, Dao {
              winningProposalId = _winningProposalId;
             //  _changeStatus(WorkflowStatus.VotesTallied);
         }
+
+        // Reinitialize the voting process
+         // Reinitialize the voting process
+    // voters = new mapping(address => Voter)();
+    // proposals = new Proposal[](0);
 
         workflowStatus = WorkflowStatus.VotesTallied;
         emit WorkflowStatusChange(WorkflowStatus.VotingSessionOpen, WorkflowStatus.VotesTallied);
@@ -231,7 +234,7 @@ contract Voting is Ownable, Dao {
     * @notice The workflow status must be in NeutralStatus, and the requester must not have already made this request.
     */
     function changeTotalReportNumber() external onlyAuthorOrVerifier {
-        require(workflowStatus == WorkflowStatus.NeutralStatus, "There is already a voting going on");
+        require(workflowStatus == WorkflowStatus.NeutralStatus || workflowStatus == WorkflowStatus.VotesTallied, "There is already a voting going on");
         require(!alreadyIncrementedRN[msg.sender], "You've already asked for a new min report number for promotion");
         alreadyIncrementedRN[msg.sender] = true;
         requestNumberRN ++;
@@ -244,7 +247,7 @@ contract Voting is Ownable, Dao {
     * @notice The workflow status must be in NeutralStatus, and the requester must not have already made this request.
     */
     function changeTotalVerificationNumber() external onlyAuthorOrVerifier {
-        require(workflowStatus == WorkflowStatus.NeutralStatus, "There is already a voting going on");
+        require(workflowStatus == WorkflowStatus.NeutralStatus || workflowStatus == WorkflowStatus.VotesTallied, "There is already a voting going on");
         require(!alreadyIncrementedVN[msg.sender], "You've already asked for a new min verification number for promotion");
         alreadyIncrementedVN[msg.sender] = true;
         requestNumberVN ++;
@@ -256,7 +259,7 @@ contract Voting is Ownable, Dao {
     * @notice The workflow status must be in NeutralStatus, and the requester must not have already made this request.
     */
     function changeTimeIntervalForVerifierPromotion () external onlyAuthorOrVerifier {
-        require(workflowStatus == WorkflowStatus.NeutralStatus, "There is already a voting going on");
+        require(workflowStatus == WorkflowStatus.NeutralStatus || workflowStatus == WorkflowStatus.VotesTallied, "There is already a voting going on");
         require(!alreadyIncrementedIV[msg.sender], "You've already asked for a new time interval for verifier promotion");
         alreadyIncrementedIV[msg.sender] = true;
         requestNumberIV ++;
@@ -268,7 +271,7 @@ contract Voting is Ownable, Dao {
     * @notice The workflow status must be in NeutralStatus, and the requester must not have already made this request.
     */
     function changeTimeIntervalForAuthorPromotion() external onlyAuthorOrVerifier {
-        require(workflowStatus == WorkflowStatus.NeutralStatus, "There is already a voting going on");
+        require(workflowStatus == WorkflowStatus.NeutralStatus || workflowStatus == WorkflowStatus.VotesTallied, "There is already a voting going on");
         require(!alreadyIncrementedIA[msg.sender], "You've already asked for a new time interval for author promotion");
         alreadyIncrementedIA[msg.sender] = true;
         requestNumberIA ++;
@@ -283,7 +286,11 @@ contract Voting is Ownable, Dao {
     function startVotingForReportNumber() external onlyOwner{
         require(workflowStatus == WorkflowStatus.NeutralStatus || workflowStatus == WorkflowStatus.VotesTallied, "There is already a voting going on");
         require(requestNumberRN > (numberOfAuthors + numberOfVerifiers) / 2, "The request number should be more than the half of the total of author et verifier numbers" );
-        startRegisteringVoters();
+        
+        workflowStatus = WorkflowStatus.RegisteringVoters;
+        workflowChangeTime = block.timestamp;
+
+        emit WorkflowStatusChange(WorkflowStatus.NeutralStatus, WorkflowStatus.RegisteringVoters);
         votingId = 1;
     }
     
@@ -296,7 +303,11 @@ contract Voting is Ownable, Dao {
     function startVotingForVerificationNumber() external onlyOwner{
         require(workflowStatus == WorkflowStatus.NeutralStatus || workflowStatus == WorkflowStatus.VotesTallied, "There is already a voting going on");
         require(requestNumberVN > (numberOfAuthors + numberOfVerifiers) / 2, "The request number should be more than the half of the total of author and verifier numbers" ); 
-        startRegisteringVoters();
+        
+        workflowStatus = WorkflowStatus.RegisteringVoters;
+        workflowChangeTime = block.timestamp;
+
+        emit WorkflowStatusChange(WorkflowStatus.NeutralStatus, WorkflowStatus.RegisteringVoters);
         votingId = 2;
     }
 
@@ -309,7 +320,12 @@ contract Voting is Ownable, Dao {
     function startVotingForVerifierPromotionInterval() external onlyOwner{
         require(workflowStatus == WorkflowStatus.NeutralStatus || workflowStatus == WorkflowStatus.VotesTallied, "There is already a voting going on");
         require(requestNumberIV > (numberOfAuthors + numberOfVerifiers) / 2, "The request number should be more than the half of the total of author and verifier numbers" );
-        startRegisteringVoters();
+        
+        workflowStatus = WorkflowStatus.RegisteringVoters;
+        workflowChangeTime = block.timestamp;
+
+        emit WorkflowStatusChange(WorkflowStatus.NeutralStatus, WorkflowStatus.RegisteringVoters);
+
         votingId = 3;
     }
 
@@ -322,7 +338,12 @@ contract Voting is Ownable, Dao {
     function startVotingForAuthorPromotionInterval() external onlyOwner{
         require(workflowStatus == WorkflowStatus.NeutralStatus || workflowStatus == WorkflowStatus.VotesTallied, "There is already a voting going on");
         require(requestNumberIA > (numberOfAuthors + numberOfVerifiers) / 2, "The request number should be more than the half of the total of author and verifier numbers" );
-        startRegisteringVoters();
+        
+        workflowStatus = WorkflowStatus.RegisteringVoters;
+        workflowChangeTime = block.timestamp;
+
+        emit WorkflowStatusChange(WorkflowStatus.NeutralStatus, WorkflowStatus.RegisteringVoters);
+
         votingId = 4;
     }
 }

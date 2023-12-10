@@ -34,6 +34,16 @@ describe("VOTING", async function () {
       ({ owner, voter1, voter2, voting, author, verifier } = await loadFixture(
         initializeBlockchain
       ));
+      await voting.connect(owner).createAuthor(author.address);
+      await voting.connect(owner).createVerifier(verifier.address);
+      await voting.connect(author).changeTotalReportNumber();
+      await voting.connect(verifier).changeTotalReportNumber();
+      await voting.connect(author).changeTotalVerificationNumber();
+      await voting.connect(verifier).changeTotalVerificationNumber();
+      await voting.connect(author).changeTimeIntervalForVerifierPromotion();
+      await voting.connect(verifier).changeTimeIntervalForVerifierPromotion();
+      await voting.connect(author).changeTimeIntervalForAuthorPromotion();
+      await voting.connect(verifier).changeTimeIntervalForAuthorPromotion();
     });
 
     it("if NOT owner, should NOT add voters", async function () {
@@ -112,6 +122,16 @@ describe("VOTING", async function () {
       ({ owner, voter1, voter2, voting, author, verifier } = await loadFixture(
         initializeBlockchain
       ));
+      await voting.connect(owner).createAuthor(author.address);
+      await voting.connect(owner).createVerifier(verifier.address);
+      await voting.connect(author).changeTotalReportNumber();
+      await voting.connect(verifier).changeTotalReportNumber();
+      await voting.connect(author).changeTotalVerificationNumber();
+      await voting.connect(verifier).changeTotalVerificationNumber();
+      await voting.connect(author).changeTimeIntervalForVerifierPromotion();
+      await voting.connect(verifier).changeTimeIntervalForVerifierPromotion();
+      await voting.connect(author).changeTimeIntervalForAuthorPromotion();
+      await voting.connect(verifier).changeTimeIntervalForAuthorPromotion();
       await voting.startRegisteringVoters();
       await voting.voterRegisters(owner.address);
     });
@@ -119,7 +139,7 @@ describe("VOTING", async function () {
     it("Proposal registration session should be open to add proposals", async function () {
       const proposal = 5;
       await expect(voting.registerProposal(proposal)).to.be.revertedWith(
-        "Proposal registration session is not open"
+        "Proposal registration session is not open or already finished"
       );
     });
 
@@ -177,6 +197,16 @@ describe("VOTING", async function () {
       ({ owner, voter1, voter2, voting } = await loadFixture(
         initializeBlockchain
       ));
+      await voting.connect(owner).createAuthor(author.address);
+      await voting.connect(owner).createVerifier(verifier.address);
+      await voting.connect(author).changeTotalReportNumber();
+      await voting.connect(verifier).changeTotalReportNumber();
+      await voting.connect(author).changeTotalVerificationNumber();
+      await voting.connect(verifier).changeTotalVerificationNumber();
+      await voting.connect(author).changeTimeIntervalForVerifierPromotion();
+      await voting.connect(verifier).changeTimeIntervalForVerifierPromotion();
+      await voting.connect(author).changeTimeIntervalForAuthorPromotion();
+      await voting.connect(verifier).changeTimeIntervalForAuthorPromotion();
       await voting.startRegisteringVoters();
       await voting.voterRegisters(owner.address);
       await voting.voterRegisters(voter1.address);
@@ -218,6 +248,16 @@ describe("VOTING", async function () {
       ({ owner, voter1, voter2, voting } = await loadFixture(
         initializeBlockchain
       ));
+      await voting.connect(owner).createAuthor(author.address);
+      await voting.connect(owner).createVerifier(verifier.address);
+      await voting.connect(author).changeTotalReportNumber();
+      await voting.connect(verifier).changeTotalReportNumber();
+      await voting.connect(author).changeTotalVerificationNumber();
+      await voting.connect(verifier).changeTotalVerificationNumber();
+      await voting.connect(author).changeTimeIntervalForVerifierPromotion();
+      await voting.connect(verifier).changeTimeIntervalForVerifierPromotion();
+      await voting.connect(author).changeTimeIntervalForAuthorPromotion();
+      await voting.connect(verifier).changeTimeIntervalForAuthorPromotion();
       await voting.startRegisteringVoters();
       await voting.voterRegisters(owner.address);
       await voting.voterRegisters(voter1.address);
@@ -233,7 +273,7 @@ describe("VOTING", async function () {
 
     it("Voting session should be open", async function () {
       await expect(voting.tallyVote()).to.be.revertedWith(
-        "Voting session should be open"
+        "Voting session should be open before talling votes"
       );
     });
 
@@ -312,6 +352,7 @@ describe("VOTING MANAGEMENT", async function () {
       ));
       await voting.connect(owner).createAuthor(author.address);
       await voting.connect(owner).createVerifier(verifier.address);
+      await voting.connect(owner).createVerifier(voter2.address);
     });
 
     it("If not Author or Verifier SHOULD NOT trigger changeTotalReportNumber function", async function () {
@@ -322,27 +363,29 @@ describe("VOTING MANAGEMENT", async function () {
 
     it("Initial request number should be 0", async function () {
       const initialrequestNumberRN = await voting.requestNumberRN();
-      expect(initialrequestNumberRN).to.equal(0);
+      expect(await initialrequestNumberRN).to.equal(0);
     });
 
     it("SHOULD NOT be triggered if workflow is not neutral", async function () {
-      await voting.startRegisteringVoters();
+      await voting.connect(author).changeTotalReportNumber();
+      await voting.connect(verifier).changeTotalReportNumber();
+      await voting.startVotingForReportNumber();
       await expect(
-        voting.connect(author).changeTotalReportNumber()
+        voting.connect(voter2).changeTotalReportNumber()
       ).to.be.revertedWith("There is already a voting going on");
     });
 
     it("Author SHOULD trigger changeTotalReportNumber function to increment request number", async function () {
       await voting.connect(author).changeTotalReportNumber();
       const result = await voting.requestNumberRN();
-      expect(result).to.equal(1);
+      expect(await result).to.equal(1);
     });
 
     it("Request number SHOULD be two if triggered twice", async function () {
       await voting.connect(author).changeTotalReportNumber();
       await voting.connect(verifier).changeTotalReportNumber();
       const result = await voting.requestNumberRN();
-      expect(result).to.equal(2);
+      expect(await result).to.equal(2);
     });
 
     it("Request number SHOULD NOT be triggered twice by the same address", async function () {
@@ -368,13 +411,15 @@ describe("VOTING MANAGEMENT", async function () {
     });
 
     it("SHOULD NOT be triggered if workflow is not neutral", async function () {
-      await voting.startRegisteringVoters();
+      await voting.connect(author).changeTotalVerificationNumber();
+      await voting.connect(verifier).changeTotalVerificationNumber();
+      await voting.startVotingForVerificationNumber();
       await expect(
-        voting.connect(author).changeTotalReportNumber()
+        voting.connect(voter2).changeTotalVerificationNumber()
       ).to.be.revertedWith("There is already a voting going on");
     });
 
-    it("Author SHOULD trigger changeTotalReportNumber function to increment request number", async function () {
+    it("Author SHOULD trigger changeTotalVerificationNumber function to increment request number", async function () {
       await voting.connect(author).changeTotalVerificationNumber();
       const result = await voting.requestNumberVN();
       expect(result).to.equal(1);
@@ -410,13 +455,16 @@ describe("VOTING MANAGEMENT", async function () {
     });
 
     it("SHOULD NOT be triggered if workflow is not neutral", async function () {
-      await voting.startRegisteringVoters();
+      await voting.connect(author).changeTimeIntervalForVerifierPromotion();
+      await voting.connect(verifier).changeTimeIntervalForVerifierPromotion();
+      // await voting.connect(owner).createAuthor(owner.address);
+      await voting.startVotingForVerifierPromotionInterval();
       await expect(
-        voting.connect(author).changeTotalReportNumber()
+        voting.connect(voter2).changeTimeIntervalForVerifierPromotion()
       ).to.be.revertedWith("There is already a voting going on");
     });
 
-    it("Author SHOULD trigger changeTotalReportNumber function to increment request number", async function () {
+    it("Author SHOULD trigger  changeTotalVerificationNumber  function to increment request number", async function () {
       await voting.connect(author).changeTimeIntervalForVerifierPromotion();
       const result = await voting.requestNumberIV();
       expect(result).to.equal(1);
@@ -451,13 +499,15 @@ describe("VOTING MANAGEMENT", async function () {
     });
 
     it("SHOULD NOT be triggered if workflow is not neutral", async function () {
-      await voting.startRegisteringVoters();
+      await voting.connect(author).changeTimeIntervalForAuthorPromotion();
+      await voting.connect(verifier).changeTimeIntervalForAuthorPromotion();
+      await voting.startVotingForAuthorPromotionInterval();
       await expect(
-        voting.connect(author).changeTotalReportNumber()
+        voting.connect(voter2).changeTimeIntervalForAuthorPromotion()
       ).to.be.revertedWith("There is already a voting going on");
     });
 
-    it("Author SHOULD trigger changeTotalReportNumber function to increment request number", async function () {
+    it("Author SHOULD trigger changeTimeIntervalForAuthorPromotion function to increment request number", async function () {
       await voting.connect(author).changeTimeIntervalForAuthorPromotion();
       const result = await voting.requestNumberIA();
       expect(result).to.equal(1);
@@ -489,6 +539,7 @@ describe("VOTING MANAGEMENT", async function () {
       ));
       await voting.connect(owner).createAuthor(author.address);
       await voting.connect(owner).createVerifier(verifier.address);
+      await voting.connect(owner).createVerifier(owner.address);
       await voting.connect(author).changeTotalReportNumber();
       await voting.connect(author).changeTotalVerificationNumber();
       await voting.connect(author).changeTimeIntervalForVerifierPromotion();
@@ -505,7 +556,8 @@ describe("VOTING MANAGEMENT", async function () {
     });
 
     it("SHOULD NOT be triggered if workflow is not neutral", async function () {
-      await voting.startRegisteringVoters();
+      await voting.connect(verifier).changeTotalReportNumber();
+      await voting.startVotingForReportNumber();
       await expect(
         voting.connect(author).changeTotalReportNumber()
       ).to.be.revertedWith("There is already a voting going on");
@@ -543,6 +595,7 @@ describe("VOTING MANAGEMENT", async function () {
     });
 
     it("SHOULD NOT be triggered if workflow is not neutral", async function () {
+      await voting.connect(verifier).changeTotalReportNumber();
       await voting.startRegisteringVoters();
       await expect(
         voting.connect(author).changeTotalReportNumber()
@@ -581,6 +634,7 @@ describe("VOTING MANAGEMENT", async function () {
     });
 
     it("SHOULD NOT be triggered if workflow is not neutral", async function () {
+      await voting.connect(verifier).changeTotalReportNumber();
       await voting.startRegisteringVoters();
       await expect(
         voting.connect(author).changeTotalReportNumber()
@@ -618,6 +672,7 @@ describe("VOTING MANAGEMENT", async function () {
     });
 
     it("SHOULD NOT be triggered if workflow is not neutral", async function () {
+      await voting.connect(verifier).changeTotalReportNumber();
       await voting.startRegisteringVoters();
       await expect(
         voting.connect(author).changeTotalReportNumber()

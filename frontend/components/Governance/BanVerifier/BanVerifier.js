@@ -3,6 +3,9 @@
 // ReactJs
 import { useEffect, useState } from "react";
 
+// Toastify
+import { ToastContainer, toast } from "react-toastify";
+
 // Wagmi
 import {
   prepareWriteContract,
@@ -18,6 +21,9 @@ import { hardhat } from "viem/chains";
 
 // Contract's information
 import { Voting_Abi, Dao_Abi, contractAddress_Voting } from "@/constants/index";
+
+// Components
+import Spinner from "../../Spinner/Spinner";
 
 import { Flex } from "../../Voting/Styles/Flex.styled";
 import { H2 } from "../../Voting/Styles/H2.styled";
@@ -35,6 +41,9 @@ const BanVerifier = () => {
   // Event information
   const [bannedVerifierEvents, setBannedVerifierEvents] = useState([]);
 
+  // Toast
+  const [loading, setLoading] = useState(false);
+
   // Event handling function
   const getBannedVerifierEvents = async () => {
     try {
@@ -48,13 +57,14 @@ const BanVerifier = () => {
 
       setBannedVerifierEvents(logs.map((log) => log.args._verifier));
       let lastEvent = bannedVerifierEvents[bannedVerifierEvents.length - 1];
-      alert("Banned verifier address : " + lastEvent);
+      toast.success(`Banned Verifier address: ${lastEvent}`);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
   const banVerifier = async () => {
+    setLoading(true);
     try {
       const { request } = await prepareWriteContract({
         address: contractAddress_Voting,
@@ -70,7 +80,9 @@ const BanVerifier = () => {
 
       getBannedVerifierEvents();
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -87,6 +99,8 @@ const BanVerifier = () => {
           Submit
         </Button>
       </Flex>
+      <Spinner loading={loading} />
+      <ToastContainer autoClose={3000} />
     </Label>
   );
 };

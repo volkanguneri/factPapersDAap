@@ -19,8 +19,6 @@ import { Button } from "./Styles/Button.styled";
 import { Label } from "./Styles/Label.styled";
 import { StyledInfoDiv } from "./Styles/InfoDiv.styled";
 
-// ... Importations nécessaires ...
-
 const GetterProposal = () => {
   const [proposalId, setProposalId] = useState("");
   const [contractData, setContractData] = useState("");
@@ -34,10 +32,25 @@ const GetterProposal = () => {
         args: [proposalId],
       });
       setContractData(data);
+      // getProposalIds();
     } catch (err) {
       alert(err.message);
     }
   };
+
+  // const getProposalIds = async () => {
+  //   try {
+  //     const data = await readContract({
+  //       address: contractAddress_Voting,
+  //       abi: Voting_Abi,
+  //       functionName: "proposals",
+  //     });
+  //     console.log(data.length);
+  //     // setProposals(data);
+  //   } catch (err) {
+  //     alert(err.message);
+  //   }
+  // };
 
   return (
     <Label>
@@ -65,6 +78,9 @@ const GetterProposal = () => {
             <li>
               <strong>Vote Count:</strong> {contractData.voteCount.toString()}
             </li>
+            {/* <li>
+              <strong>Vote Count:</strong> {contractData.voteCount.toString()}
+            </li> */}
           </ul>
         </StyledInfoDiv>
       )}

@@ -44,18 +44,17 @@ import {
 
 const Governance = () => {
   const { winningProposalNum } = useResultContext();
+  const [votingId, setVotingId] = useState(null);
 
-  const [governanceData01, setGovernanceData01] = useState("");
-  const [governanceData02, setGovernanceData02] = useState("");
-  const [governanceData03, setGovernanceData03] = useState("");
-  const [governanceData04, setGovernanceData04] = useState("");
+  const [governanceData01, setGovernanceData01] = useState(null);
+  const [governanceData02, setGovernanceData02] = useState(null);
+  const [governanceData03, setGovernanceData03] = useState(null);
+  const [governanceData04, setGovernanceData04] = useState(null);
 
-  const [requestNumberDataRN, setRequestNumberDataRN] = useState("");
-  const [requestNumberDataVN, setRequestNumberDataVN] = useState("");
-  const [requestNumberDataIV, setRequestNumberDataIV] = useState("");
-  const [requestNumberDataIA, setRequestNumberDataIA] = useState("");
-
-  const [variableToChange, setVariableToChange] = useState("");
+  const [requestNumberDataRN, setRequestNumberDataRN] = useState(null);
+  const [requestNumberDataVN, setRequestNumberDataVN] = useState(null);
+  const [requestNumberDataIV, setRequestNumberDataIV] = useState(null);
+  const [requestNumberDataIA, setRequestNumberDataIA] = useState(null);
 
   // ::::::::::::::::::::::::::::::::: GET PROMOTION VALUES:::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -76,7 +75,7 @@ const Governance = () => {
         abi: Dao_Abi,
         functionName: "VrequiredVerificationsForAuthorPromotion",
       });
-      setGovernanceData02(data);
+      setGovernanceData02(data.toString());
     } catch (err) {
       alert(err.message);
     }
@@ -387,8 +386,25 @@ const Governance = () => {
     // }
   };
 
+  const getVotingId = async () => {
+    try {
+      const data = await readContract({
+        address: contractAddress_Voting,
+        abi: Voting_Abi,
+        functionName: "votingId",
+      });
+      let dataToString = data.toString();
+      setVotingId(dataToString);
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   useEffect(() => {
     getPromotionValues();
+  }, []);
+
+  useEffect(() => {
     readRequestNumbers();
   }, [
     requestNumberDataRN,
@@ -397,14 +413,25 @@ const Governance = () => {
     requestNumberDataIA,
   ]);
 
-  useEffect(() => {
-    console.log("Winning Proposal Num from Context:", winningProposalNum);
-  }, [winningProposalNum]);
+  console.log("votinId", votingId);
+  console.log("winningProposalNum", winningProposalNum);
+
+  const renderWinningProposalNum = () => {
+    switch (votingId) {
+      case "1":
+        return setGovernanceData01(winningProposalNum);
+      case "2":
+        return setGovernanceData02(winningProposalNum);
+      case "3":
+        return setGovernanceData03(winningProposalNum);
+      case "4":
+        return setGovernanceData04(winningProposalNum);
+    }
+  };
 
   useEffect(() => {
-    setGovernanceData01(winningProposalNum);
-    console.log(governanceData01);
-    console.log(winningProposalNum);
+    getVotingId();
+    renderWinningProposalNum();
   }, [winningProposalNum]);
 
   return (

@@ -12,7 +12,8 @@ export const ResultProvider = ({ children }) => {
   const [winningProposalNum, setWinningProposalNum] = useState("");
 
   const setNum = (num) => {
-    setWinningProposalNum(num);
+    let numToString = num.toString();
+    setWinningProposalNum(numToString);
   };
 
   return (
