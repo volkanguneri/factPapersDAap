@@ -60,7 +60,7 @@ const Verifiers = () => {
       setverifierRegisteredEvents(logs.map((log) => log.args._verifier));
       let lastEvent =
         verifierRegisteredEvents[verifierRegisteredEvents.length - 1];
-      toast.success(`Added author address: ${lastEvent}`);
+      toast.success(`Added verifier address: ${lastEvent}`);
     } catch (err) {
       alert(err.message);
     }

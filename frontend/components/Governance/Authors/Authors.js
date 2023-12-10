@@ -59,7 +59,7 @@ const Authors = () => {
 
       setAuthorRegisteredEvents(logs.map((log) => log.args._author));
       let lastEvent = authorRegisteredEvents[authorRegisteredEvents.length - 1];
-      toast.success(`Added author address: ${lastEvent}`);
+      toast.success(`Added Author Address: ${lastEvent}`);
     } catch (err) {
       toast.error(err.message);
     }

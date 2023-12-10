@@ -173,11 +173,6 @@ contract Voting is Ownable, Dao {
             //  _changeStatus(WorkflowStatus.VotesTallied);
         }
 
-        // Reinitialize the voting process
-         // Reinitialize the voting process
-    // voters = new mapping(address => Voter)();
-    // proposals = new Proposal[](0);
-
         workflowStatus = WorkflowStatus.VotesTallied;
         emit WorkflowStatusChange(WorkflowStatus.VotingSessionOpen, WorkflowStatus.VotesTallied);
     }

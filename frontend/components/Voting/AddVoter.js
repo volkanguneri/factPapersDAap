@@ -3,6 +3,9 @@
 // ReactJs
 import { useEffect, useState } from "react";
 
+// Toastify
+import { ToastContainer, toast } from "react-toastify";
+
 // Wagmi
 import {
   prepareWriteContract,
@@ -18,6 +21,9 @@ import { hardhat } from "viem/chains";
 
 // Contract's information
 import { Voting_Abi, contractAddress_Voting } from "@/constants/index";
+
+// Components
+import Spinner from "../Spinner/Spinner";
 
 import { Flex } from "./Styles/Flex.styled";
 import { H2 } from "./Styles/H2.styled";
@@ -35,6 +41,9 @@ const AddVoter = () => {
   // Event information
   const [voterRegisteredEvents, setVoterRegisteredEvents] = useState([]);
 
+  // Toast
+  const [loading, setLoading] = useState(false);
+
   // Event handling function
   const getVoterRegisteredEvents = async () => {
     try {
@@ -50,14 +59,16 @@ const AddVoter = () => {
       let lastEvent = await voterRegisteredEvents[
         voterRegisteredEvents.length - 1
       ];
-      // alert(lastEvent);
+      toast.success(`Added Voter address: ${lastEvent}`);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
-  // Fonction pour ajouter un électeur
+  // Fonction to add a voter
+
   const addVoter = async () => {
+    setLoading(true);
     try {
       const { request } = await prepareWriteContract({
         address: contractAddress_Voting,
@@ -73,7 +84,9 @@ const AddVoter = () => {
 
       getVoterRegisteredEvents();
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -94,6 +107,8 @@ const AddVoter = () => {
           Submit
         </Button>
       </Flex>
+      <Spinner loading={loading} />
+      <ToastContainer autoClose={3000} />
     </Label>
   );
 };
