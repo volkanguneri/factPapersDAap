@@ -3,6 +3,9 @@
 // ReactJs
 import { useState, useEffect } from "react";
 
+// UseContext
+import { useResultContext } from "../../UseContext/ResultContext";
+
 import Authors from "../Authors/Authors";
 import Verifiers from "../Verifiers/Verifiers";
 import BanAuthor from "../BanAuthor/BanAuthor";
@@ -40,6 +43,8 @@ import {
 } from "@/constants/index";
 
 const Governance = () => {
+  const { winningProposalNum } = useResultContext();
+
   const [governanceData01, setGovernanceData01] = useState("");
   const [governanceData02, setGovernanceData02] = useState("");
   const [governanceData03, setGovernanceData03] = useState("");
@@ -61,7 +66,7 @@ const Governance = () => {
         abi: Dao_Abi,
         functionName: "VrequiredReportsForVerifierPromotion",
       });
-      setGovernanceData01(data);
+      setGovernanceData01(data.toString());
     } catch (err) {
       alert(err.message);
     }
@@ -392,6 +397,16 @@ const Governance = () => {
     requestNumberDataIA,
   ]);
 
+  useEffect(() => {
+    console.log("Winning Proposal Num from Context:", winningProposalNum);
+  }, [winningProposalNum]);
+
+  useEffect(() => {
+    setGovernanceData01(winningProposalNum);
+    console.log(governanceData01);
+    console.log(winningProposalNum);
+  }, [winningProposalNum]);
+
   return (
     <>
       <StyledMain>
@@ -407,7 +422,7 @@ const Governance = () => {
                   <PSTyled>
                     Minimum Report Number For Verifier Promotion: {""}
                   </PSTyled>
-                  <strong>{governanceData01.toString()}</strong>
+                  <strong>{governanceData01}</strong>
                   <StyledButton type="button" onClick={changePromotionValues01}>
                     Voting Request
                   </StyledButton>

@@ -4,7 +4,7 @@ export const StyledWorkflow = styled.aside`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 3em;
+  gap: 5em;
 `;
 
 export const Button = styled.button`
@@ -12,8 +12,8 @@ export const Button = styled.button`
   justify-content: center;
   align-items: center;
   gap: 1em;
-  margin-top: 2rem;
-  margin-bottom: 3rem;
+  margin-top: 2em;
+  margin-bottom: 3em;
   padding: 1em;
   border: none;
   cursor: pointer;
@@ -31,12 +31,19 @@ export const Button = styled.button`
 `;
 
 export const State = styled.h2`
+  font-weight: 600;
   text-align: center;
-  margin-inline: 14em;
+  margin-inline: 20em;
   margin-bottom: 2em;
   color: red;
   background-color: #f9f9f9;
   padding-block: 3em;
   border-radius: 10px;
-  // width: 30em;
+`;
+
+export const PStyled = styled.p`
+  margin-bottom: 1em;
+  color: blue;
+  font-weight: 600;
+  font-size: 1.3em;
 `;

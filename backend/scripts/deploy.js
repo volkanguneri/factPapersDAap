@@ -15,7 +15,7 @@ async function main() {
   // VOTING DEPLOYMENT
 
   const Voting = await ethers.getContractFactory("Voting");
-  const voting = await Voting.deploy("");
+  const voting = await Voting.deploy();
 
   console.log("Voting deployed to:", voting.target);
 }

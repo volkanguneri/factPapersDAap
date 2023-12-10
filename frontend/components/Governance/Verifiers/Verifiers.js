@@ -48,10 +48,9 @@ const Verifiers = () => {
         toBlock: "latest",
       });
 
-      setverifierRegisteredEvents(logs.map((log) => log.args.verifier));
-      let lastEvent = await verifierRegisteredEvents[
-        verifierRegisteredEvents.length - 1
-      ];
+      setverifierRegisteredEvents(logs.map((log) => log.args._verifier));
+      let lastEvent =
+        verifierRegisteredEvents[verifierRegisteredEvents.length - 1];
       alert("Added verifier address : " + lastEvent);
     } catch (err) {
       alert(err.message);
@@ -59,7 +58,7 @@ const Verifiers = () => {
   };
 
   // Fonction pour ajouter un électeur
-  const createverifier = async () => {
+  const createVerifier = async () => {
     try {
       const { request } = await prepareWriteContract({
         address: contractAddress_Voting,
@@ -79,10 +78,6 @@ const Verifiers = () => {
     }
   };
 
-  // useEffect(() => {
-  //   getVerifierRegisteredEvents();
-  // }, []);
-
   return (
     <Label>
       <H2>Add Verifier</H2>
@@ -92,7 +87,7 @@ const Verifiers = () => {
           value={verifier}
           onChange={(e) => setVerifier(e.target.value)}
         />
-        <Button type="button" onClick={createverifier}>
+        <Button type="button" onClick={createVerifier}>
           Submit
         </Button>
       </Flex>

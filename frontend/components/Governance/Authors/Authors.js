@@ -42,17 +42,15 @@ const Authors = () => {
       const logs = await client.getLogs({
         address: contractAddress_Voting,
         event: parseAbiItem(
-          "event AuthorCreated(address indexed author, uint256 date)"
+          "event AuthorCreated(address indexed _author, uint256 date)"
         ),
         fromBlock: 0n,
         toBlock: "latest",
       });
 
-      setAuthorRegisteredEvents(logs.map((log) => log.args.author));
-      let lastEvent = await authorRegisteredEvents[
-        authorRegisteredEvents.length - 1
-      ];
-      //   alert("Added author address : " + lastEvent);
+      setAuthorRegisteredEvents(logs.map((log) => log.args._author));
+      let lastEvent = authorRegisteredEvents[authorRegisteredEvents.length - 1];
+      alert("Added author address : " + lastEvent);
     } catch (err) {
       alert(err.message);
     }
@@ -78,11 +76,6 @@ const Authors = () => {
       alert(err.message);
     }
   };
-
-  // Utilisation de useEffect pour s'abonner aux événements lors du montage initial
-  useEffect(() => {
-    getAuthorRegisteredEvents();
-  }, []);
 
   return (
     <Label>

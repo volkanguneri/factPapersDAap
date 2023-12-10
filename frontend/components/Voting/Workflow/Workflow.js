@@ -8,24 +8,11 @@ import { prepareWriteContract, writeContract, readContract } from "@wagmi/core";
 import { Voting_Abi, contractAddress_Voting } from "@/constants/index";
 
 // Styled Components
-import { StyledWorkflow, Button, State } from "./Workflow.styled";
+import { StyledWorkflow, Button, State, PStyled } from "./Workflow.styled";
 
 const Workflow = () => {
   const [workflowStatus, setWorkflowStatus] = useState("Voting is not open");
-
-  const startRegisteringVoters = async () => {
-    try {
-      const { request } = await prepareWriteContract({
-        address: contractAddress_Voting,
-        abi: Voting_Abi,
-        functionName: "startRegisteringVoters",
-      });
-
-      const { hash } = await writeContract(request);
-    } catch (err) {
-      alert(err.message);
-    }
-  };
+  const [votingId, setVotingId] = useState(1);
 
   const startProposalRegister = async () => {
     try {
@@ -77,7 +64,20 @@ const Workflow = () => {
         functionName: "workflowStatus",
       });
       setWorkflowStatus(data);
-      console.log(data);
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const readVotingId = async () => {
+    try {
+      const data = await readContract({
+        address: contractAddress_Voting,
+        abi: Voting_Abi,
+        functionName: "votingId",
+      });
+      let dataToString = data.toString();
+      setVotingId(dataToString);
     } catch (err) {
       alert(err.message);
     }
@@ -85,11 +85,15 @@ const Workflow = () => {
 
   useEffect(() => {
     readWorkflowStatus();
+    readVotingId();
 
-    const intervalId = setInterval(readWorkflowStatus, 5000); // Appel toutes les 5 secondes, ajustez selon vos besoins
+    const intervalId01 = setInterval(readWorkflowStatus, 5000);
+
+    const intervalId02 = setInterval(readVotingId, 5000);
 
     return () => {
-      clearInterval(intervalId);
+      clearInterval(intervalId01);
+      clearInterval(intervalId02);
     };
   }, []);
 
@@ -110,24 +114,40 @@ const Workflow = () => {
     }
   };
 
+  const renderRuleToVoteFor = () => {
+    switch (votingId) {
+      case "0":
+        return "No rule to vote for yet";
+      case "1":
+        return "Minimum Report Number for Verifier Promotion";
+      case "2":
+        return "Minimum Verification Number For Author Promotion ";
+      case "3":
+        return "Minimum Period For Verifier Promotion";
+      case "4":
+        return "Minimum Period For Verifier Promotion";
+    }
+  };
+
   return (
     <>
       <StyledWorkflow>
-        <Button type="button" onClick={startRegisteringVoters}>
-          Registering Voters
-        </Button>
         <Button type="button" onClick={startProposalRegister}>
-          Proposals Registration Started
+          Start Proposal Registration
         </Button>
         <Button type="button" onClick={startVotingSession}>
-          Voting Session Started
+          Start Voting Session
         </Button>
         <Button type="button" onClick={tallyVote}>
-          Votes Tallied
+          Tally Votes
         </Button>
       </StyledWorkflow>
 
       <State>{renderWorkflowStatus()}</State>
+      <State>
+        <PStyled>Voting For</PStyled>
+        {renderRuleToVoteFor()}
+      </State>
     </>
   );
 };

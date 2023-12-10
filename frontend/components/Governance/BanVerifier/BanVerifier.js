@@ -47,10 +47,8 @@ const BanVerifier = () => {
       });
 
       setBannedVerifierEvents(logs.map((log) => log.args._verifier));
-      let lastEvent = await bannedVerifierEvents[
-        bannedVerifierEvents.length - 1
-      ];
-      //   alert("Banned verifier address : " + lastEvent);
+      let lastEvent = bannedVerifierEvents[bannedVerifierEvents.length - 1];
+      alert("Banned verifier address : " + lastEvent);
     } catch (err) {
       alert(err.message);
     }
@@ -75,11 +73,6 @@ const BanVerifier = () => {
       alert(err.message);
     }
   };
-
-  // Utilisation de useEffect pour s'abonner aux événements lors du montage initial
-  useEffect(() => {
-    getBannedVerifierEvents();
-  }, []);
 
   return (
     <Label>

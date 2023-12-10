@@ -3,6 +3,9 @@
 // React
 import { useState } from "react";
 
+// UseContext
+import { useResultContext } from "../UseContext/ResultContext";
+
 // Wagmi
 import { readContract } from "@wagmi/core";
 
@@ -17,8 +20,9 @@ import { UlStyled } from "./Styles/Ul.styled";
 import { ResultButton } from "./Styles/ResultButton.styled";
 
 const Result = () => {
+  const { setNum } = useResultContext();
   const [winningProposalID, setWinningProposalID] = useState("");
-  const [proposal, setProposal] = useState("");
+  const [winningProposal, setWinningProposal] = useState("");
 
   const displayResult = async () => {
     try {
@@ -28,13 +32,13 @@ const Result = () => {
         functionName: "winningProposalId",
       });
       setWinningProposalID(data);
-      getProposal(data);
+      getWinningProposal(data);
     } catch (err) {
       alert(err.message);
     }
   };
 
-  const getProposal = async (proposalId) => {
+  const getWinningProposal = async (proposalId) => {
     try {
       const proposalData = await readContract({
         address: contractAddress_Voting,
@@ -42,9 +46,8 @@ const Result = () => {
         functionName: "getProposals",
         args: [proposalId],
       });
-      // const { num, voteCount } = data;
-
-      setProposal(proposalData);
+      setWinningProposal(proposalData);
+      setNum(proposalData.num.toString());
     } catch (err) {
       alert(err.message);
     }
@@ -58,13 +61,14 @@ const Result = () => {
 
       {winningProposalID && (
         <>
-          {proposal ? (
+          {winningProposal ? (
             <UlStyled>
               <li>
-                <strong>Value:</strong> {proposal.num.toString()}
+                <strong>Value:</strong> {winningProposal.num.toString()}
               </li>
               <li>
-                <strong>Vote Count:</strong> {proposal.voteCount.toString()}
+                <strong>Vote Count:</strong>{" "}
+                {winningProposal.voteCount.toString()}
               </li>
             </UlStyled>
           ) : (

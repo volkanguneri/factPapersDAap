@@ -23,8 +23,6 @@ contract Voting is Ownable, Dao {
         uint num;
         uint voteCount;
     }
-
-    string public variableToChange;
   
     // Request numbers will be incremented enouphe to trigger a voting
     uint256 public requestNumberRN;
@@ -38,6 +36,7 @@ contract Voting is Ownable, Dao {
     uint256 public winningProposalId;
     Proposal public winningProposal;
     uint256 public numberOfVoters;
+    uint256 public votingId;
 
     Proposal[] proposals;
     mapping (address => Voter) private voters;
@@ -71,8 +70,7 @@ contract Voting is Ownable, Dao {
     event votingEnded(uint256 _winningProposal);
 
 
-    constructor(string memory _variableToChange) {
-        variableToChange = _variableToChange;
+    constructor() {
     }
     
 
@@ -189,6 +187,7 @@ contract Voting is Ownable, Dao {
     */
     function startRegisteringVoters() public onlyOwner {
         require(workflowStatus == WorkflowStatus.NeutralStatus, "Registration session has already started");
+        require(requestNumberRN > (numberOfAuthors + numberOfVerifiers) / 2, "The request number should be more than the half of the total of author et verifier numbers" );
 
         workflowStatus = WorkflowStatus.RegisteringVoters;
         workflowChangeTime = block.timestamp;
@@ -281,11 +280,11 @@ contract Voting is Ownable, Dao {
     * @notice The workflow status must be in NeutralStatus or VotesTallied, and the request number for reports must be more than half of the total of authors and verifiers.
     * @notice This function sets the variableToChange to "requiredReportsForVerifierPromotion" and starts the RegisteringVoters workflow status.
     */
-    function startVotingForReportNumber() external onlyOwner {
+    function startVotingForReportNumber() external onlyOwner{
         require(workflowStatus == WorkflowStatus.NeutralStatus || workflowStatus == WorkflowStatus.VotesTallied, "There is already a voting going on");
         require(requestNumberRN > (numberOfAuthors + numberOfVerifiers) / 2, "The request number should be more than the half of the total of author et verifier numbers" );
-        variableToChange = "requiredReportsForVerifierPromotion"; 
         startRegisteringVoters();
+        votingId = 1;
     }
     
     /**
@@ -296,9 +295,9 @@ contract Voting is Ownable, Dao {
     */
     function startVotingForVerificationNumber() external onlyOwner{
         require(workflowStatus == WorkflowStatus.NeutralStatus || workflowStatus == WorkflowStatus.VotesTallied, "There is already a voting going on");
-        require(requestNumberVN > (numberOfAuthors + numberOfVerifiers) / 2, "The request number should be more than the half of the total of author and verifier numbers" );
-        variableToChange = "requiredVerificationsForAuthorPromotion"; 
+        require(requestNumberVN > (numberOfAuthors + numberOfVerifiers) / 2, "The request number should be more than the half of the total of author and verifier numbers" ); 
         startRegisteringVoters();
+        votingId = 2;
     }
 
     /**
@@ -310,8 +309,8 @@ contract Voting is Ownable, Dao {
     function startVotingForVerifierPromotionInterval() external onlyOwner{
         require(workflowStatus == WorkflowStatus.NeutralStatus || workflowStatus == WorkflowStatus.VotesTallied, "There is already a voting going on");
         require(requestNumberIV > (numberOfAuthors + numberOfVerifiers) / 2, "The request number should be more than the half of the total of author and verifier numbers" );
-        variableToChange = "timeIntervalForVerifierPromotion"; 
         startRegisteringVoters();
+        votingId = 3;
     }
 
     /**
@@ -320,11 +319,11 @@ contract Voting is Ownable, Dao {
     * @notice The workflow status must be in NeutralStatus or VotesTallied, and the request number for the time interval must be more than half of the total of authors and verifiers.
     * @notice This function sets the variableToChange to "timeIntervalForAuthorPromotion" and starts the RegisteringVoters workflow status.
     */
-    function startVotingForAuthorPromotionInterval() external onlyOwner {
+    function startVotingForAuthorPromotionInterval() external onlyOwner{
         require(workflowStatus == WorkflowStatus.NeutralStatus || workflowStatus == WorkflowStatus.VotesTallied, "There is already a voting going on");
         require(requestNumberIA > (numberOfAuthors + numberOfVerifiers) / 2, "The request number should be more than the half of the total of author and verifier numbers" );
-        variableToChange = "timeIntervalForAuthorPromotion"; 
         startRegisteringVoters();
+        votingId = 4;
     }
 }
 

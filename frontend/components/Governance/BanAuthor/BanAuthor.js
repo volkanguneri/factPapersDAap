@@ -47,8 +47,8 @@ const BanAuthor = () => {
       });
 
       setBannedAuthorEvents(logs.map((log) => log.args._author));
-      let lastEvent = await bannedAuthorEvents[bannedAuthorEvents.length - 1];
-      //   alert("Banned author address : " + lastEvent);
+      let lastEvent = bannedAuthorEvents[bannedAuthorEvents.length - 1];
+      alert("Banned author address : " + lastEvent);
     } catch (err) {
       alert(err.message);
     }
@@ -73,11 +73,6 @@ const BanAuthor = () => {
       alert(err.message);
     }
   };
-
-  // Utilisation de useEffect pour s'abonner aux événements lors du montage initial
-  useEffect(() => {
-    getBannedAuthorEvents();
-  }, []);
 
   return (
     <Label>
