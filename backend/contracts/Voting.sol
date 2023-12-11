@@ -133,6 +133,7 @@ contract Voting is Ownable, Dao {
      * @dev Function to vote on a proposal.
      * @param _proposalId The ID of the proposal to vote for.
      */
+
     function vote(uint _proposalId) external onlyVoters {
         require(workflowStatus == WorkflowStatus.VotingSessionOpen,
             "Voting session havent started yet");

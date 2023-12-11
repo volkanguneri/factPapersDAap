@@ -204,4 +204,64 @@ describe("DAO", async function () {
         .withArgs(verifier.address);
     });
   });
+
+  describe("DAO RULE SETTERS", async function () {
+    beforeEach(async function () {
+      ({ owner, author, verifier, registeredReader } = await loadFixture(
+        initializeBlockchain
+      ));
+    });
+
+    it("SHOULD change required report number if owner", async function () {
+      await dao.setVrequiredReportsForVerifierPromotion(5);
+      expect(await dao.VrequiredReportsForVerifierPromotion()).to.equal(5);
+    });
+
+    it("SHOULD not change required report number if owner", async function () {
+      await expect(
+        dao.connect(author).setVrequiredReportsForVerifierPromotion(5)
+      ).to.be.revertedWithCustomError(dao, "OwnableUnauthorizedAccount");
+    });
+
+    it("SHOULD change required verifications for author promotion if owner", async function () {
+      await dao.setVrequiredVerificationsForAuthorPromotion(15);
+      expect(await dao.VrequiredVerificationsForAuthorPromotion()).to.equal(15);
+    });
+
+    it("SHOULD not change required verifications for author promotion if not owner", async function () {
+      await expect(
+        dao.connect(author).setVrequiredVerificationsForAuthorPromotion(15)
+      ).to.be.revertedWithCustomError(dao, "OwnableUnauthorizedAccount");
+    });
+
+    it("SHOULD change time interval for verifier promotion if owner", async function () {
+      await dao.setVtimeIntervalForVerifierPromotion(7 * 24 * 60 * 60);
+      expect(await dao.VtimeIntervalForVerifierPromotion()).to.equal(
+        7 * 24 * 60 * 60
+      );
+    });
+
+    it("SHOULD not change time interval for verifier promotion if not owner", async function () {
+      await expect(
+        dao
+          .connect(author)
+          .setVtimeIntervalForVerifierPromotion(7 * 24 * 60 * 60)
+      ).to.be.revertedWithCustomError(dao, "OwnableUnauthorizedAccount");
+    });
+
+    it("SHOULD change time interval for author promotion if owner", async function () {
+      await dao.setVtimeIntervalForAuthorPromotion(15 * 24 * 60 * 60); // 15 jours en secondes
+      expect(await dao.VtimeIntervalForAuthorPromotion()).to.equal(
+        15 * 24 * 60 * 60
+      );
+    });
+
+    it("SHOULD not change time interval for author promotion if not owner", async function () {
+      await expect(
+        dao
+          .connect(author)
+          .setVtimeIntervalForAuthorPromotion(15 * 24 * 60 * 60)
+      ).to.be.revertedWithCustomError(dao, "OwnableUnauthorizedAccount");
+    });
+  });
 });

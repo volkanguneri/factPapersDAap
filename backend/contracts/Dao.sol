@@ -12,7 +12,7 @@ pragma solidity ^0.8.22;
 
 contract Dao is Ownable {
 
-    // DAO rules for promotion that the elligible community can change values by voting
+    // DAO rules for promotion that the eligible community can change values by voting
     uint256 public VrequiredReportsForVerifierPromotion = 10;
     uint256 public VrequiredVerificationsForAuthorPromotion = 20;
     uint256 public VtimeIntervalForVerifierPromotion = 6 * 30 * 24 * 60 * 60; // 6 months in seconds;
@@ -20,7 +20,6 @@ contract Dao is Ownable {
 
     uint256 public numberOfAuthors;
     uint256 public numberOfVerifiers;
-    
 
     // DAO roles
 
@@ -41,12 +40,10 @@ contract Dao is Ownable {
         uint256 totalReportNumber;
     }
 
-   
     // Mappings
     mapping(address => Author) public authors;
     mapping(address => Verifier) public verifiers;
     mapping(address => RegisteredReader) public readers;
-
 
     // Events
     event AuthorCreated(address indexed _author, uint256 date);
@@ -56,13 +53,14 @@ contract Dao is Ownable {
     event RegisteredReaderBanned(address _registeredReaderBanned);
 
     constructor() Ownable(msg.sender) {
-      
+        // Initialize contract with owner
     }
 
     modifier onlyAuthorOrVerifier() {
         require(authors[msg.sender].isAuthor || verifiers[msg.sender].isVerifier, "Only authors or verifiers can access!");
-    _;
-}
+        _;
+    }
+
     /**
      * @dev Whitelisted members - Create an author with the specified address.
      * @notice Only the owner can create an author.
@@ -70,7 +68,7 @@ contract Dao is Ownable {
      */
     function createAuthor(address _author) external onlyOwner {
         require(!authors[_author].isAuthor, "Author already exists");
-        require(!verifiers[_author].isVerifier, "Verifiers can not be author at the same time");
+        require(!verifiers[_author].isVerifier, "Verifiers cannot be authors at the same time");
         authors[_author] = Author(true, 0);
         numberOfAuthors++;
         emit AuthorCreated(_author, block.timestamp);
@@ -89,14 +87,14 @@ contract Dao is Ownable {
         emit VerifierCreated(_verifier, block.timestamp);
     }
 
-     /**
+    /**
      * @dev Whitelisted members - Ban an author with the specified address.
      * @notice Only the owner can ban an author.
      * @param _author The address of the author to be banned.
      */
-    function banAuthor(address _author) external onlyOwner{
+    function banAuthor(address _author) external onlyOwner {
         require(authors[_author].isAuthor, "Author not found");
-        authors[_author].isAuthor = false; 
+        authors[_author].isAuthor = false;
         numberOfAuthors--;
         emit AuthorBanned(_author);
     }
@@ -106,11 +104,42 @@ contract Dao is Ownable {
      * @notice Only the owner can ban a verifier.
      * @param _verifier The address of the verifier to be banned.
      */
-    function banVerifier(address _verifier) external onlyOwner{
+    function banVerifier(address _verifier) external onlyOwner {
         require(verifiers[_verifier].isVerifier, "Verifier not found");
-        verifiers[_verifier].isVerifier = false; 
+        verifiers[_verifier].isVerifier = false;
         numberOfVerifiers--;
         emit VerifierBanned(_verifier);
     }
-}
 
+    /**
+     * @dev Set the minimum number of reports required for verifier promotion.
+     * @param _value The new value for VrequiredReportsForVerifierPromotion.
+     */
+    function setVrequiredReportsForVerifierPromotion(uint256 _value) external onlyOwner {
+        VrequiredReportsForVerifierPromotion = _value;
+    }
+
+    /**
+     * @dev Set the minimum number of verifications required for author promotion.
+     * @param _value The new value for VrequiredVerificationsForAuthorPromotion.
+     */
+    function setVrequiredVerificationsForAuthorPromotion(uint256 _value) external onlyOwner {
+        VrequiredVerificationsForAuthorPromotion = _value;
+    }
+
+    /**
+     * @dev Set the time interval for verifier promotion in seconds.
+     * @param _value The new value for VtimeIntervalForVerifierPromotion.
+     */
+    function setVtimeIntervalForVerifierPromotion(uint256 _value) external onlyOwner {
+        VtimeIntervalForVerifierPromotion = _value;
+    }
+
+    /**
+     * @dev Set the time interval for author promotion in seconds.
+     * @param _value The new value for VtimeIntervalForAuthorPromotion.
+     */
+    function setVtimeIntervalForAuthorPromotion(uint256 _value) external onlyOwner {
+        VtimeIntervalForAuthorPromotion = _value;
+    }
+}
