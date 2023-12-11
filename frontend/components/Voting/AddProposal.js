@@ -17,9 +17,6 @@ import {
 // Contract's information
 import { Voting_Abi, contractAddress_Voting } from "../../constants/index";
 
-// Components
-import Spinner from "../Spinner/Spinner";
-
 import { Flex } from "./Styles/Flex.styled";
 import { H2 } from "./Styles/H2.styled";
 import { Input } from "./Styles/Input.styled";
@@ -31,10 +28,8 @@ const AddProposal = () => {
   const [proposalAddedEvents, setProposalAddedEvents] = useState([]);
 
   // Toast
-  const [loading, setLoading] = useState(false);
 
   const addProposal = async () => {
-    setLoading(true);
     try {
       const { request } = await prepareWriteContract({
         address: contractAddress_Voting,
@@ -61,10 +56,8 @@ const AddProposal = () => {
         toBlock: "latest",
       });
 
-      setVoterRegisteredEvents(logs.map((log) => log.args.proposalId));
-      let lastEvent = await voterRegisteredEvents[
-        voterRegisteredEvents.length - 1
-      ];
+      setProposalAddedEvents(logs.map((log) => log.args.proposalId));
+      let lastEvent = await proposalAddedEvents[proposalAddedEvents.length - 1];
       toast.success(`Added Proposal Id: ${lastEvent}`);
     } catch (err) {
       toast.error(err.message);
@@ -85,8 +78,6 @@ const AddProposal = () => {
           Submit
         </Button>
       </Flex>
-      <Spinner loading={loading} />
-      <ToastContainer autoClose={3000} />
     </Label>
   );
 };

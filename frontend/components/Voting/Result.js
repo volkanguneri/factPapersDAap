@@ -13,8 +13,6 @@ import { readContract } from "@wagmi/core";
 import { Voting_Abi, contractAddress_Voting } from "../../constants/index";
 
 // Styled Components
-import { H2 } from "./Styles/H2.styled";
-import { Button } from "./Styles/Button.styled";
 import { Label } from "./Styles/Label.styled";
 import { UlStyled } from "./Styles/Ul.styled";
 import { ResultButton } from "./Styles/ResultButton.styled";

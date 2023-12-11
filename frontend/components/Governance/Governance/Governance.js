@@ -30,10 +30,11 @@ import {
 } from "@wagmi/core";
 // import { useAccount } from "wagmi";
 
-// Viem
+// Viem event handling
 import { parseAbiItem } from "viem";
 import { usePublicClient } from "wagmi";
 import { hardhat } from "viem/chains";
+
 // Contract's information
 import {
   Dao_Abi,
@@ -110,7 +111,7 @@ const Governance = () => {
 
   // :::::::::::::::::::::::::::::::::::CHANGE PROMOTION VALUES::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-  const changePromotionValues01 = async () => {
+  const changeTotalReportNumber = async () => {
     try {
       const { request } = await prepareWriteContract({
         address: contractAddress_Voting,
@@ -138,7 +139,7 @@ const Governance = () => {
     }
   };
 
-  const changePromotionValues02 = async () => {
+  const changeTotalVerificationNumber = async () => {
     try {
       const { request } = await prepareWriteContract({
         address: contractAddress_Voting,
@@ -165,7 +166,7 @@ const Governance = () => {
       alert(err.message);
     }
   };
-  const changePromotionValues03 = async () => {
+  const changeTimeIntervalForVerifierPromotion = async () => {
     try {
       const { request } = await prepareWriteContract({
         address: contractAddress_Voting,
@@ -192,7 +193,7 @@ const Governance = () => {
       alert(err.message);
     }
   };
-  const changePromotionValues04 = async () => {
+  const changeTimeIntervalForAuthorPromotion = async () => {
     try {
       const { request } = await prepareWriteContract({
         address: contractAddress_Voting,
@@ -400,20 +401,7 @@ const Governance = () => {
     }
   };
 
-  useEffect(() => {
-    getPromotionValues();
-  }, []);
-
-  useEffect(() => {
-    readRequestNumbers();
-  }, [
-    requestNumberDataRN,
-    requestNumberDataVN,
-    requestNumberDataIV,
-    requestNumberDataIA,
-  ]);
-
-  console.log("votinId", votingId);
+  console.log("3-votinId", votingId);
   console.log("winningProposalNum", winningProposalNum);
 
   const renderWinningProposalNum = () => {
@@ -430,9 +418,22 @@ const Governance = () => {
   };
 
   useEffect(() => {
+    getPromotionValues();
+  }, [governanceData01, governanceData02, governanceData03, governanceData04]);
+
+  useEffect(() => {
+    readRequestNumbers();
+  }, [
+    requestNumberDataRN,
+    requestNumberDataVN,
+    requestNumberDataIV,
+    requestNumberDataIA,
+  ]);
+
+  useEffect(() => {
     getVotingId();
     renderWinningProposalNum();
-  }, [winningProposalNum]);
+  }, [votingId]);
 
   return (
     <>
@@ -450,7 +451,7 @@ const Governance = () => {
                     Minimum Report Number For Verifier Promotion: {""}
                   </PSTyled>
                   <strong>{governanceData01}</strong>
-                  <StyledButton type="button" onClick={changePromotionValues01}>
+                  <StyledButton type="button" onClick={changeTotalReportNumber}>
                     Voting Request
                   </StyledButton>
                   <strong>{requestNumberDataRN}</strong>
@@ -467,7 +468,10 @@ const Governance = () => {
                     Minimum Verification Number For Author Promotion:{" "}
                   </PSTyled>
                   <strong>{governanceData02.toString()}</strong>
-                  <StyledButton type="button" onClick={changePromotionValues02}>
+                  <StyledButton
+                    type="button"
+                    onClick={changeTotalVerificationNumber}
+                  >
                     Voting Request
                   </StyledButton>
                   <strong>{requestNumberDataVN}</strong>
@@ -487,7 +491,10 @@ const Governance = () => {
                   <strong>
                     {governanceData03} {""} Mo
                   </strong>
-                  <StyledButton type="button" onClick={changePromotionValues03}>
+                  <StyledButton
+                    type="button"
+                    onClick={changeTimeIntervalForVerifierPromotion}
+                  >
                     Voting Request
                   </StyledButton>
                   <strong>{requestNumberDataIV}</strong>
@@ -504,7 +511,10 @@ const Governance = () => {
                   <strong>
                     {governanceData04} {""} Mo
                   </strong>
-                  <StyledButton type="button" onClick={changePromotionValues04}>
+                  <StyledButton
+                    type="button"
+                    onClick={changeTimeIntervalForAuthorPromotion}
+                  >
                     Voting Request
                   </StyledButton>
                   <strong>{requestNumberDataIA}</strong>

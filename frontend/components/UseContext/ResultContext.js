@@ -1,9 +1,3 @@
-// import { createContext } from "react";
-
-// import { Result } from "../Voting.Result";
-
-// export const ResultContext = createContext(Result);
-
 import React, { createContext, useContext, useState } from "react";
 
 const ResultContext = createContext();
@@ -12,8 +6,7 @@ export const ResultProvider = ({ children }) => {
   const [winningProposalNum, setWinningProposalNum] = useState("");
 
   const setNum = (num) => {
-    let numToString = num.toString();
-    setWinningProposalNum(numToString);
+    setWinningProposalNum(num);
   };
 
   return (

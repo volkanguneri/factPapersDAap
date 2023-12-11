@@ -10,22 +10,14 @@ import { ToastContainer, toast } from "react-toastify";
 import { prepareWriteContract, writeContract, readContract } from "@wagmi/core";
 import { Voting_Abi, contractAddress_Voting } from "@/constants/index";
 
-// Components
-import Spinner from "../../Spinner/Spinner";
-
 // Styled Components
 import { StyledWorkflow, Button, State, PStyled } from "./Workflow.styled";
 
 const Workflow = () => {
   const [workflowStatus, setWorkflowStatus] = useState("Voting is not open");
-  const [votingId, setVotingId] = useState(1);
-
-  // Toast
-  const [loading, setLoading] = useState(false);
+  const [votingId, setVotingId] = useState();
 
   const startProposalRegister = async () => {
-    setLoading(true);
-
     try {
       const { request } = await prepareWriteContract({
         address: contractAddress_Voting,
@@ -36,13 +28,10 @@ const Workflow = () => {
       const { hash } = await writeContract(request);
     } catch (err) {
       toast.error(err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
   const startVotingSession = async () => {
-    setLoading(true);
     try {
       const { request } = await prepareWriteContract({
         address: contractAddress_Voting,
@@ -53,13 +42,10 @@ const Workflow = () => {
       const { hash } = await writeContract(request);
     } catch (err) {
       toast.error(err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
   const tallyVote = async () => {
-    setLoading(true);
     try {
       const { request } = await prepareWriteContract({
         address: contractAddress_Voting,
@@ -70,13 +56,10 @@ const Workflow = () => {
       const { hash } = await writeContract(request);
     } catch (err) {
       toast.error(err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
   const readWorkflowStatus = async () => {
-    setLoading(true);
     try {
       const data = await readContract({
         address: contractAddress_Voting,
@@ -86,8 +69,6 @@ const Workflow = () => {
       setWorkflowStatus(data);
     } catch (err) {
       toast.error(err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -165,16 +146,10 @@ const Workflow = () => {
         </Button>
       </StyledWorkflow>
 
-      <State>
-        {renderWorkflowStatus()}
-        <Spinner loading={loading} />
-        <ToastContainer autoClose={3000} />
-      </State>
+      <State>{renderWorkflowStatus()}</State>
       <State>
         <PStyled>Voting For</PStyled>
         {renderRuleToVoteFor()}
-        <Spinner loading={loading} />
-        <ToastContainer autoClose={3000} />
       </State>
     </>
   );

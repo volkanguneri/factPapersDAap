@@ -22,9 +22,6 @@ import { hardhat } from "viem/chains";
 // Contract's information
 import { Voting_Abi, contractAddress_Voting } from "@/constants/index";
 
-// Components
-import Spinner from "../Spinner/Spinner";
-
 import { Flex } from "./Styles/Flex.styled";
 import { H2 } from "./Styles/H2.styled";
 import { Input } from "./Styles/Input.styled";
@@ -42,7 +39,6 @@ const AddVoter = () => {
   const [voterRegisteredEvents, setVoterRegisteredEvents] = useState([]);
 
   // Toast
-  const [loading, setLoading] = useState(false);
 
   // Event handling function
   const getVoterRegisteredEvents = async () => {
@@ -68,7 +64,6 @@ const AddVoter = () => {
   // Fonction to add a voter
 
   const addVoter = async () => {
-    setLoading(true);
     try {
       const { request } = await prepareWriteContract({
         address: contractAddress_Voting,
@@ -85,14 +80,8 @@ const AddVoter = () => {
       getVoterRegisteredEvents();
     } catch (err) {
       toast.error(err.message);
-    } finally {
-      setLoading(false);
     }
   };
-
-  useEffect(() => {
-    getVoterRegisteredEvents();
-  }, []);
 
   return (
     <Label>
@@ -107,8 +96,6 @@ const AddVoter = () => {
           Submit
         </Button>
       </Flex>
-      <Spinner loading={loading} />
-      <ToastContainer autoClose={3000} />
     </Label>
   );
 };
