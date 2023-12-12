@@ -72,7 +72,6 @@ const Governance = () => {
     } catch (err) {
       toast.error(err.message);
     }
-    console.log("min report num2", minReportNum);
     try {
       const data = await readContract({
         address: contractAddress_Dao,

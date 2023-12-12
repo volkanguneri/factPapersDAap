@@ -63,7 +63,6 @@ const Workflow = () => {
       toast.error(err.message);
     }
   };
-
   const readWorkflowStatus = async () => {
     try {
       const data = await readContract({
@@ -94,22 +93,13 @@ const Workflow = () => {
 
   useEffect(() => {
     readWorkflowStatus();
-    readVotingId();
+
+    const intervalId01 = setInterval(readWorkflowStatus, 5000);
+
+    return () => {
+      clearInterval(intervalId01);
+    };
   }, []);
-
-  // useEffect(() => {
-  //   readWorkflowStatus();
-  //   readVotingId();
-
-  //   const intervalId01 = setInterval(readWorkflowStatus, 5000);
-
-  //   const intervalId02 = setInterval(readVotingId, 5000);
-
-  //   return () => {
-  //     clearInterval(intervalId01);
-  //     clearInterval(intervalId02);
-  //   };
-  // }, []);
 
   const renderWorkflowStatus = () => {
     switch (workflowStatus) {
