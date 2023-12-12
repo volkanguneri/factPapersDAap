@@ -50,8 +50,7 @@ const BanVerifier = () => {
       });
 
       setBannedVerifierEvents(logs.map((log) => log.args._verifier));
-      let lastEvent = bannedVerifierEvents[bannedVerifierEvents.length - 1];
-      toast.success(`Banned Verifier address: ${lastEvent}`);
+      toast.success("Verifier Banned");
     } catch (err) {
       toast.error(err.message);
     }

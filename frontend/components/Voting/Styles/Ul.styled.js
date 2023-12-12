@@ -7,4 +7,5 @@ export const UlStyled = styled.ul`
   width: 100%;
   text-align: center;
   padding-block: 1em;
+  margin-bottom: 2em;
 `;

@@ -52,11 +52,9 @@ const Verifiers = () => {
       });
 
       setverifierRegisteredEvents(logs.map((log) => log.args._verifier));
-      let lastEvent =
-        verifierRegisteredEvents[verifierRegisteredEvents.length - 1];
-      toast.success(`Added verifier address: ${lastEvent}`);
+      toast.success("Verifier Added");
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -74,10 +72,9 @@ const Verifiers = () => {
       const data = await waitForTransaction({
         hash: hash,
       });
-
       getVerifierRegisteredEvents();
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 

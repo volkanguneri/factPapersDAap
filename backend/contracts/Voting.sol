@@ -7,7 +7,6 @@ import "./Dao.sol";
 pragma solidity ^0.8.22;
 
 error ExaequoNoWinner();
-error NoWinner();
 
 contract Voting is Ownable, Dao {
 
@@ -65,10 +64,13 @@ contract Voting is Ownable, Dao {
     );
     event ProposalRegistered(uint proposalId);
     event Voted(address voter, uint proposalId);
-    event votingEnded(uint256 _winningProposal);
 
 
     constructor() {
+        // Genesis proposal for blank votes
+        Proposal memory newProposal;
+        newProposal.num = 0;
+        proposals.push(newProposal);
     }
     
 
@@ -160,22 +162,21 @@ contract Voting is Ownable, Dao {
             if (proposals[i].voteCount > proposals[_winningProposalId].voteCount) {
             _winningProposalId = i;
 
-            exaequo = false;
-
         } else if (proposals[i].voteCount == proposals[_winningProposalId].voteCount && proposals[_winningProposalId].voteCount > 0) {
             exaequo = true;
         }
         }
         if (exaequo) {
-            //  startRevoting(proposals[_winningProposalId].voteCount);
+            exaequo = false;
+            workflowStatus = WorkflowStatus.NeutralStatus;
+            emit WorkflowStatusChange(WorkflowStatus.VotingSessionOpen, WorkflowStatus.NeutralStatus);
             revert ExaequoNoWinner();
         } else {
              winningProposalId = _winningProposalId;
-            //  _changeStatus(WorkflowStatus.VotesTallied);
-        }
-
         workflowStatus = WorkflowStatus.VotesTallied;
         emit WorkflowStatusChange(WorkflowStatus.VotingSessionOpen, WorkflowStatus.VotesTallied);
+        }
+
     }
 
 
@@ -203,11 +204,6 @@ contract Voting is Ownable, Dao {
 
         workflowStatus = WorkflowStatus.RegisteringProposals;
         workflowChangeTime = block.timestamp;
-
-        // Genesis proposal for blank votes
-        Proposal memory newProposal;
-        newProposal.num = 0;
-        proposals.push(newProposal);
 
         emit WorkflowStatusChange(WorkflowStatus.RegisteringVoters, WorkflowStatus.RegisteringProposals);
     }

@@ -1,7 +1,7 @@
 "use client";
 
 // ReactJs
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Wagmi
 import {
@@ -9,7 +9,11 @@ import {
   writeContract,
   waitForTransaction,
 } from "@wagmi/core";
-// import { useAccount } from "wagmi";
+
+// Viem event handling
+import { parseAbiItem } from "viem";
+import { usePublicClient } from "wagmi";
+import { hardhat } from "viem/chains";
 
 // Contract's information
 import { Voting_Abi, contractAddress_Voting } from "@/constants/index";
@@ -19,9 +23,14 @@ import { H2 } from "./Styles/H2.styled";
 import { Input } from "./Styles/Input.styled";
 import { Button } from "./Styles/Button.styled";
 import { Label } from "./Styles/Label.styled";
+import { toast } from "react-toastify";
 
 const SetVote = () => {
   const [proposalId, setProposalId] = useState("");
+  const [votedEvents, setVotedEvents] = useState("");
+
+  // Wagmi function / client creation for event listenning
+  const client = usePublicClient();
 
   const setVote = async () => {
     try {
@@ -35,9 +44,27 @@ const SetVote = () => {
       const data = await waitForTransaction({
         hash: hash,
       });
-      alert("Contract written");
+      getVotedEvents();
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
+    }
+  };
+
+  // Event handling function
+  const getVotedEvents = async () => {
+    try {
+      // get.Logs from viem
+      const logs = await client.getLogs({
+        address: contractAddress_Voting,
+        event: parseAbiItem("event Voted(address voter, uint proposalId)"),
+        fromBlock: 0n,
+        toBlock: "latest",
+      });
+
+      setVotedEvents(logs.map((log) => log.args.proposalId));
+      toast.success("Voted");
+    } catch (err) {
+      toast.error(err.message);
     }
   };
 

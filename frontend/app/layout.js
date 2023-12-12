@@ -13,7 +13,7 @@ require("dotenv").config();
 const { chains, publicClient } = configureChains([hardhat], [publicProvider()]);
 const { connectors } = getDefaultWallets({
   appName: "My RainbowKit App",
-  projectId: process.env.INFURA || "48850a402642441a360aaf998ac21039",
+  projectId: process.env.WALLETCONNECT_ID || "48850a402642441a360aaf998ac21039",
   chains,
 });
 

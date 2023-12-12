@@ -18,6 +18,18 @@ async function main() {
   const voting = await Voting.deploy();
 
   console.log("Voting deployed to:", voting.target);
+
+  const ownerAddress = deployer.address;
+
+  try {
+    const tx = await voting.createAuthor(ownerAddress);
+
+    await tx.wait();
+
+    console.log("Owner registered as an author in Voting contract");
+  } catch (error) {
+    console.error("Error registering owner as an author:", error);
+  }
 }
 main()
   .then(() => process.exit(0))

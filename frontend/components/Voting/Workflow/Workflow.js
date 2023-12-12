@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 
 // Toastify
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 // Wagmi
 import { prepareWriteContract, writeContract, readContract } from "@wagmi/core";
@@ -24,8 +24,8 @@ const Workflow = () => {
         abi: Voting_Abi,
         functionName: "startProposalRegister",
       });
-
       const { hash } = await writeContract(request);
+      toast.success("Proposal Registeration Started");
     } catch (err) {
       toast.error(err.message);
     }
@@ -40,6 +40,7 @@ const Workflow = () => {
       });
 
       const { hash } = await writeContract(request);
+      toast.success("Voting Session Started");
     } catch (err) {
       toast.error(err.message);
     }
@@ -54,6 +55,7 @@ const Workflow = () => {
       });
 
       const { hash } = await writeContract(request);
+      toast.success("Votes Tallied");
     } catch (err) {
       toast.error(err.message);
     }
@@ -82,7 +84,7 @@ const Workflow = () => {
       let dataToString = data.toString();
       setVotingId(dataToString);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 

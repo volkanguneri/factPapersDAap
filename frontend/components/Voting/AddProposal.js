@@ -12,7 +12,11 @@ import {
   writeContract,
   waitForTransaction,
 } from "@wagmi/core";
-// import { useAccount } from "wagmi";
+
+// Viem
+import { parseAbiItem } from "viem";
+import { usePublicClient } from "wagmi";
+import { hardhat } from "viem/chains";
 
 // Contract's information
 import { Voting_Abi, contractAddress_Voting } from "../../constants/index";
@@ -27,7 +31,8 @@ const AddProposal = () => {
   const [value, setValue] = useState("");
   const [proposalAddedEvents, setProposalAddedEvents] = useState([]);
 
-  // Toast
+  // Wagmi function / client creation for event listenning
+  const client = usePublicClient();
 
   const addProposal = async () => {
     try {
@@ -41,6 +46,7 @@ const AddProposal = () => {
       const data = await waitForTransaction({
         hash: hash,
       });
+      getProposalAddedEvents();
     } catch (err) {
       toast.error(err.message);
     }
@@ -55,10 +61,8 @@ const AddProposal = () => {
         fromBlock: 0n,
         toBlock: "latest",
       });
-
       setProposalAddedEvents(logs.map((log) => log.args.proposalId));
-      let lastEvent = await proposalAddedEvents[proposalAddedEvents.length - 1];
-      toast.success(`Added Proposal Id: ${lastEvent}`);
+      toast.success("Proposal Added");
     } catch (err) {
       toast.error(err.message);
     }

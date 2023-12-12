@@ -302,17 +302,6 @@ describe("VOTING", async function () {
       expect(num).to.equal(30);
     });
 
-    // it("Should revert if exaequo", async function () {
-    //   await voting.startVotingSession();
-    //   await voting.vote(3);
-    //   await voting.connect(voter1).vote(2);
-    //   await voting.tallyVote();
-    //   await expect(voting.tallyVote()).to.be.revertedWithCustomError(
-    //     voting,
-    //     "ExaequoNoWinner"
-    //   );
-    // });
-
     it("Should change workflow status to VotesTallied", async function () {
       await voting.startVotingSession();
       await voting.vote(1);

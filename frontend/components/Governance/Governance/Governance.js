@@ -3,6 +3,9 @@
 // ReactJs
 import { useState, useEffect } from "react";
 
+// React-Toast
+import { toast } from "react-toastify";
+
 // UseContext
 import { useResultContext } from "../../UseContext/ResultContext";
 
@@ -45,17 +48,17 @@ import {
 
 const Governance = () => {
   const { winningProposalNum } = useResultContext();
-  const [votingId, setVotingId] = useState(null);
+  const [votingId, setVotingId] = useState("");
 
-  const [governanceData01, setGovernanceData01] = useState(null);
-  const [governanceData02, setGovernanceData02] = useState(null);
-  const [governanceData03, setGovernanceData03] = useState(null);
-  const [governanceData04, setGovernanceData04] = useState(null);
+  const [minReportNum, setMinReportNum] = useState("");
+  const [minVerifNum, setMinVerifNum] = useState("");
+  const [minPeriodVerifierPro, setMinPeriodVerifierPro] = useState("");
+  const [minPeriodAuthorPro, setMinPeriodAuthorPro] = useState("");
 
-  const [requestNumberDataRN, setRequestNumberDataRN] = useState(null);
-  const [requestNumberDataVN, setRequestNumberDataVN] = useState(null);
-  const [requestNumberDataIV, setRequestNumberDataIV] = useState(null);
-  const [requestNumberDataIA, setRequestNumberDataIA] = useState(null);
+  const [requestNumberDataRN, setRequestNumberDataRN] = useState("");
+  const [requestNumberDataVN, setRequestNumberDataVN] = useState("");
+  const [requestNumberDataIV, setRequestNumberDataIV] = useState("");
+  const [requestNumberDataIA, setRequestNumberDataIA] = useState("");
 
   // ::::::::::::::::::::::::::::::::: GET PROMOTION VALUES:::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -66,19 +69,20 @@ const Governance = () => {
         abi: Dao_Abi,
         functionName: "VrequiredReportsForVerifierPromotion",
       });
-      setGovernanceData01(data.toString());
+      setMinReportNum(data.toString());
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
+    console.log("min report num2", minReportNum);
     try {
       const data = await readContract({
         address: contractAddress_Dao,
         abi: Dao_Abi,
         functionName: "VrequiredVerificationsForAuthorPromotion",
       });
-      setGovernanceData02(data.toString());
+      setMinVerifNum(data.toString());
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
     try {
       const data = await readContract({
@@ -89,9 +93,9 @@ const Governance = () => {
       const dataString = data.toString();
       const inMonths = dataString / 60 / 60 / 24 / 30;
 
-      setGovernanceData03(inMonths);
+      setMinPeriodVerifierPro(inMonths);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
     try {
       const data = await readContract({
@@ -103,9 +107,9 @@ const Governance = () => {
       const dataString = data.toString();
       const inMonths = dataString / 60 / 60 / 24 / 30;
 
-      setGovernanceData04(inMonths);
+      setMinPeriodAuthorPro(inMonths);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -122,8 +126,9 @@ const Governance = () => {
       const data = await waitForTransaction({
         hash: hash,
       });
+      toast.success("Voting Requested To Change Report Number For Promotion");
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
 
     try {
@@ -135,7 +140,7 @@ const Governance = () => {
       const dataString = data.toString();
       setRequestNumberDataRN(dataString);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -150,8 +155,11 @@ const Governance = () => {
       const data = await waitForTransaction({
         hash: hash,
       });
+      toast.success(
+        "Voting Requested To Change Verification Number For Promotion"
+      );
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
 
     try {
@@ -163,7 +171,7 @@ const Governance = () => {
       const dataString = data.toString();
       setRequestNumberDataVN(dataString);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
   const changeTimeIntervalForVerifierPromotion = async () => {
@@ -177,8 +185,9 @@ const Governance = () => {
       const data = await waitForTransaction({
         hash: hash,
       });
+      toast.success("Voting Requested To Change Verifier Period For Promotion");
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
 
     try {
@@ -190,7 +199,7 @@ const Governance = () => {
       const dataString = data.toString();
       setRequestNumberDataIV(dataString);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
   const changeTimeIntervalForAuthorPromotion = async () => {
@@ -204,8 +213,9 @@ const Governance = () => {
       const data = await waitForTransaction({
         hash: hash,
       });
+      toast.success("Voting Requested To Change Author Period For Promotion");
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
 
     try {
@@ -219,7 +229,7 @@ const Governance = () => {
 
       setRequestNumberDataIA(dataString);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -235,7 +245,7 @@ const Governance = () => {
       const dataString = data.toString();
       setRequestNumberDataRN(dataString);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
     try {
       const data = await readContract({
@@ -246,7 +256,7 @@ const Governance = () => {
       const dataString = data.toString();
       setRequestNumberDataVN(dataString);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
     try {
       const data = await readContract({
@@ -257,7 +267,7 @@ const Governance = () => {
       const dataString = data.toString();
       setRequestNumberDataIV(dataString);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
     try {
       const data = await readContract({
@@ -270,7 +280,7 @@ const Governance = () => {
 
       setRequestNumberDataIA(dataString);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -287,21 +297,10 @@ const Governance = () => {
       const data = await waitForTransaction({
         hash: hash,
       });
+      toast.success("Voting For Report Number Started");
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
-
-    // try {
-    //   const data = await readContract({
-    //     address: contractAddress_Voting,
-    //     abi: Voting_Abi,
-    //     functionName: "variableToChange",
-    //   });
-    //   setVariableToChange(data);
-    //   console.log(data);
-    // } catch (err) {
-    //   alert(err.message);
-    // }
   };
 
   const startVotingForVerificationNumber = async () => {
@@ -315,21 +314,10 @@ const Governance = () => {
       const data = await waitForTransaction({
         hash: hash,
       });
+      toast.success("Voting For Verification Number Started");
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
-
-    // try {
-    //   const data = await readContract({
-    //     address: contractAddress_Voting,
-    //     abi: Voting_Abi,
-    //     functionName: "requestNumberVN",
-    //   });
-    //   const dataString = data.toString();
-    //   setRequestNumberDataVN(dataString);
-    // } catch (err) {
-    //   alert(err.message);
-    // }
   };
   const startVotingForVerifierPromotionInterval = async () => {
     try {
@@ -342,20 +330,10 @@ const Governance = () => {
       const data = await waitForTransaction({
         hash: hash,
       });
+      toast.success("Voting For Verifier Promotion Period Started");
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
-
-    // try {
-    //   const data = await readContract({
-    //     address: contractAddress_Voting,
-    //     abi: Voting_Abi,
-    //     functionName: "requestNumberIV",
-    //   });
-    //   const dataString = data.toString();
-    //   setRequestNumberDataIV(dataString);
-    // } catch (err) {
-    //   alert(err.message);
   };
   const startVotingForAuthorPromotionInterval = async () => {
     try {
@@ -368,24 +346,13 @@ const Governance = () => {
       const data = await waitForTransaction({
         hash: hash,
       });
+      toast.success("Voting For Author Promotion Period Started");
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
-
-    // try {
-    //   const data = await readContract({
-    //     address: contractAddress_Voting,
-    //     abi: Voting_Abi,
-    //     functionName: "requestNumberIA",
-    //   });
-
-    //   const dataString = data.toString();
-
-    //   setRequestNumberDataIA(dataString);
-    // } catch (err) {
-    //   alert(err.message);
-    // }
   };
+
+  // Voting Id
 
   const getVotingId = async () => {
     try {
@@ -394,63 +361,121 @@ const Governance = () => {
         abi: Voting_Abi,
         functionName: "votingId",
       });
-      let dataToString = data.toString();
-      setVotingId(dataToString);
+
+      setVotingId(data);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
-  console.log("3-votinId", votingId);
-  console.log("winningProposalNum", winningProposalNum);
+  console.log("votingId", votingId);
 
-  const renderWinningProposalNum = () => {
+  const writeWinningProposalNumToContract = async () => {
     switch (votingId) {
-      case "1":
-        return setGovernanceData01(winningProposalNum);
-      case "2":
-        return setGovernanceData02(winningProposalNum);
-      case "3":
-        return setGovernanceData03(winningProposalNum);
-      case "4":
-        return setGovernanceData04(winningProposalNum);
+      case 0:
+        break;
+      case 1:
+        try {
+          console.log("first one");
+          const { request } = await prepareWriteContract({
+            address: contractAddress_Voting,
+            abi: Voting_Abi,
+            functionName: "setVrequiredReportsForVerifierPromotion",
+            args: [winningProposalNum],
+          });
+          const { hash } = await writeContract(request);
+          const data = await waitForTransaction({
+            hash: hash,
+          });
+          toast.success("Minimum Report Number For Verifier Promotion Changed");
+        } catch (err) {
+          toast.error(err.message);
+        }
+        break;
+      case 2:
+        try {
+          const { request } = await prepareWriteContract({
+            address: contractAddress_Voting,
+            abi: Voting_Abi,
+            functionName: "setVrequiredVerificationsForAuthorPromotion",
+            args: [winningProposalNum],
+          });
+          const { hash } = await writeContract(request);
+          const data = await waitForTransaction({
+            hash: hash,
+          });
+          toast.success(
+            "Minimum Verification Number For Author Promotion Changed"
+          );
+        } catch (err) {
+          toast.error(err.message);
+        }
+        break;
+      case 3:
+        try {
+          const { request } = await prepareWriteContract({
+            address: contractAddress_Voting,
+            abi: Voting_Abi,
+            functionName: "setVtimeIntervalForVerifierPromotion",
+            args: [winningProposalNum],
+          });
+          const { hash } = await writeContract(request);
+          const data = await waitForTransaction({
+            hash: hash,
+          });
+          toast.success("Minimum Period For Verifier Promotion Changed");
+        } catch (err) {
+          toast.error(err.message);
+        }
+        break;
+      case 4:
+        try {
+          const { request } = await prepareWriteContract({
+            address: contractAddress_Voting,
+            abi: Voting_Abi,
+            functionName: "setVtimeIntervalForAuthorPromotion",
+            args: [winningProposalNum],
+          });
+          const { hash } = await writeContract(request);
+          const data = await waitForTransaction({
+            hash: hash,
+          });
+          toast.success("Minimum Period For Author Promotion Changed");
+        } catch (err) {
+          toast.error(err.message);
+        }
+        break;
     }
   };
-
-  useEffect(() => {
-    getPromotionValues();
-  }, [governanceData01, governanceData02, governanceData03, governanceData04]);
-
-  useEffect(() => {
-    readRequestNumbers();
-  }, [
-    requestNumberDataRN,
-    requestNumberDataVN,
-    requestNumberDataIV,
-    requestNumberDataIA,
-  ]);
 
   useEffect(() => {
     getVotingId();
-    renderWinningProposalNum();
-  }, [votingId]);
+    writeWinningProposalNumToContract();
+    getPromotionValues();
+  }, [winningProposalNum]);
+
+  console.log("winningProposalNum", winningProposalNum);
+
+  useEffect(() => {
+    readRequestNumbers();
+  }, []);
 
   return (
     <>
       <StyledMain>
         <H2Styled>Promotion Rules</H2Styled>
 
-        {governanceData01 &&
-          governanceData02 &&
-          governanceData03 &&
-          governanceData04 && (
+        {minReportNum &&
+          minVerifNum &&
+          minPeriodVerifierPro &&
+          minPeriodAuthorPro && (
             <>
               <UlStyled>
                 <LiStyled>
                   <PSTyled>
                     Minimum Report Number For Verifier Promotion: {""}
                   </PSTyled>
-                  <strong>{governanceData01}</strong>
+                  <strong>{minReportNum}</strong>
                   <StyledButton type="button" onClick={changeTotalReportNumber}>
                     Voting Request
                   </StyledButton>
@@ -467,7 +492,7 @@ const Governance = () => {
                   <PSTyled>
                     Minimum Verification Number For Author Promotion:{" "}
                   </PSTyled>
-                  <strong>{governanceData02.toString()}</strong>
+                  <strong>{minVerifNum.toString()}</strong>
                   <StyledButton
                     type="button"
                     onClick={changeTotalVerificationNumber}
@@ -489,7 +514,7 @@ const Governance = () => {
                     Minimum Period For Verifier Promotion: {""}
                   </PSTyled>
                   <strong>
-                    {governanceData03} {""} Mo
+                    {minPeriodVerifierPro} {""} Mo
                   </strong>
                   <StyledButton
                     type="button"
@@ -509,7 +534,7 @@ const Governance = () => {
                 <LiStyled>
                   <PSTyled>Minimum Period For Author Promotion: {""}</PSTyled>
                   <strong>
-                    {governanceData04} {""} Mo
+                    {minPeriodAuthorPro} {""} Mo
                   </strong>
                   <StyledButton
                     type="button"

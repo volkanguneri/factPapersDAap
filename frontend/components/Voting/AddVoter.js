@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 
 // Toastify
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 // Wagmi
 import {
@@ -50,12 +50,8 @@ const AddVoter = () => {
         fromBlock: 0n,
         toBlock: "latest",
       });
-
       setVoterRegisteredEvents(logs.map((log) => log.args.voterAddress));
-      let lastEvent = await voterRegisteredEvents[
-        voterRegisteredEvents.length - 1
-      ];
-      toast.success(`Added Voter address: ${lastEvent}`);
+      toast.success("Voter Added");
     } catch (err) {
       toast.error(err.message);
     }

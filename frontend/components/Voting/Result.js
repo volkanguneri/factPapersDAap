@@ -6,6 +6,9 @@ import { useState } from "react";
 // UseContext
 import { useResultContext } from "../UseContext/ResultContext";
 
+// React-Toast
+import { toast } from "react-toastify";
+
 // Wagmi
 import { readContract } from "@wagmi/core";
 
@@ -32,7 +35,7 @@ const Result = () => {
       setWinningProposalID(data);
       getWinningProposal(data);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -47,7 +50,7 @@ const Result = () => {
       setWinningProposal(proposalData);
       setNum(proposalData.num.toString());
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -72,6 +75,7 @@ const Result = () => {
           ) : (
             <p>Loading...</p>
           )}
+          <ResultButton>Execute Result</ResultButton>
         </>
       )}
     </Label>

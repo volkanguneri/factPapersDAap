@@ -99,6 +99,10 @@ The Voting contract extends the functionality of the Dao contract, adding a voti
    yarn hardhat run scripts/deploy.js --network sepolia
    ```
 
+7. Vercel Link to display the project
+
+   https://fact-papers.vercel.app
+
 ## **Usage**
 
 Connect your wallet and participate in the voting sessions.

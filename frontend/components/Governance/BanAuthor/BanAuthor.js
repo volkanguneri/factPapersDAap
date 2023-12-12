@@ -50,8 +50,7 @@ const BanAuthor = () => {
       });
 
       setBannedAuthorEvents(logs.map((log) => log.args._author));
-      let lastEvent = bannedAuthorEvents[bannedAuthorEvents.length - 1];
-      toast.success(`Banned author address: ${lastEvent}`);
+      toast.success("Author Banned");
     } catch (err) {
       toast.error(err.message);
     }
