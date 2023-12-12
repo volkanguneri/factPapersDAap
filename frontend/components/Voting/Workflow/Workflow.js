@@ -25,6 +25,7 @@ const Workflow = () => {
         functionName: "startProposalRegister",
       });
       const { hash } = await writeContract(request);
+      readWorkflowStatus();
       toast.success("Proposal Registeration Started");
     } catch (err) {
       toast.error(err.message);
@@ -40,6 +41,7 @@ const Workflow = () => {
       });
 
       const { hash } = await writeContract(request);
+      readWorkflowStatus();
       toast.success("Voting Session Started");
     } catch (err) {
       toast.error(err.message);
@@ -55,6 +57,7 @@ const Workflow = () => {
       });
 
       const { hash } = await writeContract(request);
+      readWorkflowStatus();
       toast.success("Votes Tallied");
     } catch (err) {
       toast.error(err.message);
@@ -69,6 +72,7 @@ const Workflow = () => {
         functionName: "workflowStatus",
       });
       setWorkflowStatus(data);
+      readVotingId();
     } catch (err) {
       toast.error(err.message);
     }
@@ -91,16 +95,21 @@ const Workflow = () => {
   useEffect(() => {
     readWorkflowStatus();
     readVotingId();
-
-    const intervalId01 = setInterval(readWorkflowStatus, 5000);
-
-    const intervalId02 = setInterval(readVotingId, 5000);
-
-    return () => {
-      clearInterval(intervalId01);
-      clearInterval(intervalId02);
-    };
   }, []);
+
+  // useEffect(() => {
+  //   readWorkflowStatus();
+  //   readVotingId();
+
+  //   const intervalId01 = setInterval(readWorkflowStatus, 5000);
+
+  //   const intervalId02 = setInterval(readVotingId, 5000);
+
+  //   return () => {
+  //     clearInterval(intervalId01);
+  //     clearInterval(intervalId02);
+  //   };
+  // }, []);
 
   const renderWorkflowStatus = () => {
     switch (workflowStatus) {

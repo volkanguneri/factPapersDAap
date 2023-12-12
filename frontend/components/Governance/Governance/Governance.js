@@ -48,7 +48,6 @@ import {
 
 const Governance = () => {
   const { winningProposalNum } = useResultContext();
-  const [votingId, setVotingId] = useState("");
 
   const [minReportNum, setMinReportNum] = useState("");
   const [minVerifNum, setMinVerifNum] = useState("");
@@ -352,113 +351,14 @@ const Governance = () => {
     }
   };
 
-  // Voting Id
-
-  const getVotingId = async () => {
-    try {
-      const data = await readContract({
-        address: contractAddress_Voting,
-        abi: Voting_Abi,
-        functionName: "votingId",
-      });
-
-      setVotingId(data);
-    } catch (err) {
-      toast.error(err.message);
-    }
-  };
-
-  console.log("votingId", votingId);
-
-  const writeWinningProposalNumToContract = async () => {
-    switch (votingId) {
-      case 0:
-        break;
-      case 1:
-        try {
-          console.log("first one");
-          const { request } = await prepareWriteContract({
-            address: contractAddress_Voting,
-            abi: Voting_Abi,
-            functionName: "setVrequiredReportsForVerifierPromotion",
-            args: [winningProposalNum],
-          });
-          const { hash } = await writeContract(request);
-          const data = await waitForTransaction({
-            hash: hash,
-          });
-          toast.success("Minimum Report Number For Verifier Promotion Changed");
-        } catch (err) {
-          toast.error(err.message);
-        }
-        break;
-      case 2:
-        try {
-          const { request } = await prepareWriteContract({
-            address: contractAddress_Voting,
-            abi: Voting_Abi,
-            functionName: "setVrequiredVerificationsForAuthorPromotion",
-            args: [winningProposalNum],
-          });
-          const { hash } = await writeContract(request);
-          const data = await waitForTransaction({
-            hash: hash,
-          });
-          toast.success(
-            "Minimum Verification Number For Author Promotion Changed"
-          );
-        } catch (err) {
-          toast.error(err.message);
-        }
-        break;
-      case 3:
-        try {
-          const { request } = await prepareWriteContract({
-            address: contractAddress_Voting,
-            abi: Voting_Abi,
-            functionName: "setVtimeIntervalForVerifierPromotion",
-            args: [winningProposalNum],
-          });
-          const { hash } = await writeContract(request);
-          const data = await waitForTransaction({
-            hash: hash,
-          });
-          toast.success("Minimum Period For Verifier Promotion Changed");
-        } catch (err) {
-          toast.error(err.message);
-        }
-        break;
-      case 4:
-        try {
-          const { request } = await prepareWriteContract({
-            address: contractAddress_Voting,
-            abi: Voting_Abi,
-            functionName: "setVtimeIntervalForAuthorPromotion",
-            args: [winningProposalNum],
-          });
-          const { hash } = await writeContract(request);
-          const data = await waitForTransaction({
-            hash: hash,
-          });
-          toast.success("Minimum Period For Author Promotion Changed");
-        } catch (err) {
-          toast.error(err.message);
-        }
-        break;
-    }
-  };
-
   useEffect(() => {
-    getVotingId();
-    writeWinningProposalNumToContract();
     getPromotionValues();
-  }, [winningProposalNum]);
-
-  console.log("winningProposalNum", winningProposalNum);
-
-  useEffect(() => {
     readRequestNumbers();
   }, []);
+
+  useEffect(() => {
+    getPromotionValues();
+  }, [winningProposalNum]);
 
   return (
     <>

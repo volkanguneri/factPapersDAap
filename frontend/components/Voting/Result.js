@@ -10,7 +10,12 @@ import { useResultContext } from "../UseContext/ResultContext";
 import { toast } from "react-toastify";
 
 // Wagmi
-import { readContract } from "@wagmi/core";
+import {
+  readContract,
+  writeContract,
+  prepareWriteContract,
+  waitForTransaction,
+} from "@wagmi/core";
 
 // Importations nécessaires
 import { Voting_Abi, contractAddress_Voting } from "../../constants/index";
@@ -24,6 +29,8 @@ const Result = () => {
   const { setNum } = useResultContext();
   const [winningProposalID, setWinningProposalID] = useState("");
   const [winningProposal, setWinningProposal] = useState("");
+
+  const [votingId, setVotingId] = useState("");
 
   const displayResult = async () => {
     try {
@@ -54,6 +61,100 @@ const Result = () => {
     }
   };
 
+  const getVotingId = async () => {
+    try {
+      const data = await readContract({
+        address: contractAddress_Voting,
+        abi: Voting_Abi,
+        functionName: "votingId",
+      });
+
+      setVotingId(data.toString());
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const writeWinningProposalNumToContract = async () => {
+    await getVotingId();
+
+    switch (votingId) {
+      case "0":
+        break;
+      case "1":
+        try {
+          console.log("first one");
+          const { request } = await prepareWriteContract({
+            address: contractAddress_Voting,
+            abi: Voting_Abi,
+            functionName: "setVrequiredReportsForVerifierPromotion",
+            args: [winningProposal.num],
+          });
+          const { hash } = await writeContract(request);
+          const data = await waitForTransaction({
+            hash: hash,
+          });
+          toast.success("Minimum Report Number For Verifier Promotion Changed");
+        } catch (err) {
+          toast.error(err.message);
+        }
+        break;
+      case "2":
+        try {
+          const { request } = await prepareWriteContract({
+            address: contractAddress_Voting,
+            abi: Voting_Abi,
+            functionName: "setVrequiredVerificationsForAuthorPromotion",
+            args: [winningProposal.num],
+          });
+          const { hash } = await writeContract(request);
+          const data = await waitForTransaction({
+            hash: hash,
+          });
+          toast.success(
+            "Minimum Verification Number For Author Promotion Changed"
+          );
+        } catch (err) {
+          toast.error(err.message);
+        }
+        break;
+      case "3":
+        try {
+          const { request } = await prepareWriteContract({
+            address: contractAddress_Voting,
+            abi: Voting_Abi,
+            functionName: "setVtimeIntervalForVerifierPromotion",
+            args: [winningProposal.num],
+          });
+          const { hash } = await writeContract(request);
+          const data = await waitForTransaction({
+            hash: hash,
+          });
+          toast.success("Minimum Period For Verifier Promotion Changed");
+        } catch (err) {
+          toast.error(err.message);
+        }
+        break;
+      case "4":
+        try {
+          const { request } = await prepareWriteContract({
+            address: contractAddress_Voting,
+            abi: Voting_Abi,
+            functionName: "setVtimeIntervalForAuthorPromotion",
+            args: [winningProposal.num],
+          });
+          const { hash } = await writeContract(request);
+          const data = await waitForTransaction({
+            hash: hash,
+          });
+          toast.success("Minimum Period For Author Promotion Changed");
+        } catch (err) {
+          toast.error(err.message);
+        }
+        break;
+    }
+  };
+
   return (
     <Label>
       <ResultButton type="button" onClick={displayResult}>
@@ -75,7 +176,12 @@ const Result = () => {
           ) : (
             <p>Loading...</p>
           )}
-          <ResultButton>Execute Result</ResultButton>
+          <ResultButton
+            type="button"
+            onClick={writeWinningProposalNumToContract}
+          >
+            Execute Result
+          </ResultButton>
         </>
       )}
     </Label>
