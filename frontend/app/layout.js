@@ -13,12 +13,11 @@ require("dotenv").config();
 const { chains, publicClient } = configureChains(
   [hardhat, sepolia],
   [publicProvider()]
-  // [alchemyProvider({ apiKey: ALCHEMY_API_KEY }), publicProvider()]
 );
 
 const { connectors } = getDefaultWallets({
   appName: "My RainbowKit App",
-  projectId: process.env.WALLETCONNECT_ID || "48850a402642441a360aaf998ac21039",
+  projectId: process.env.WALLETCONNECT_ID,
   chains,
 });
 
@@ -27,6 +26,8 @@ const wagmiConfig = createConfig({
   connectors,
   publicClient,
 });
+
+// || "48850a402642441a360aaf998ac21039"
 
 export default function RootLayout({ children }) {
   return (

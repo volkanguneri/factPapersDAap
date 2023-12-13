@@ -1,7 +1,12 @@
-export const contractAddress_Dao = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+export const contractAddress_Dao = "0x4511f8266412874009ef8F13583277651aF47899";
+
+// export const contractAddress_Dao = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 export const contractAddress_Voting =
-  "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+  "0x1FD510d66F497996c5C74b64fD576989d8ca4932";
+
+// export const contractAddress_Voting =
+//   "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 
 export const Voting_Abi = [
   {
