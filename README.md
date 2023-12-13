@@ -105,7 +105,7 @@ The Voting contract extends the functionality of the Dao contract, adding a voti
 
 8. Video of the App
 
-   https://www.loom.com/share/3d0db106c2d445cf8cb44da654576e67
+   https://www.loom.com/share/796d8807b0d8495596f594fcadb39064
 
 ## **Usage**
 

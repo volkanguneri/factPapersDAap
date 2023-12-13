@@ -17,7 +17,6 @@ import BanVerifier from "../BanVerifier/BanVerifier";
 import {
   StyledMain,
   StyledButton,
-  H1Styled,
   H2Styled,
   UlStyled,
   LiStyled,
@@ -58,6 +57,8 @@ const Governance = () => {
   const [requestNumberDataVN, setRequestNumberDataVN] = useState("");
   const [requestNumberDataIV, setRequestNumberDataIV] = useState("");
   const [requestNumberDataIA, setRequestNumberDataIA] = useState("");
+
+  const [votingId, setVotingId] = useState("");
 
   // ::::::::::::::::::::::::::::::::: GET PROMOTION VALUES:::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -350,14 +351,54 @@ const Governance = () => {
     }
   };
 
+  const getVotingId = async () => {
+    try {
+      const data = await readContract({
+        address: contractAddress_Voting,
+        abi: Voting_Abi,
+        functionName: "votingId",
+      });
+
+      setVotingId(data.toString());
+      console.log("votingId:", data.toString());
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  console.log("outside", votingId);
+
+  const displayWinningProposalNum = async () => {
+    console.log("inside", votingId, winningProposalNum);
+
+    switch (votingId) {
+      case "0":
+        console.log("break");
+        break;
+      case "1":
+        return setMinReportNum(winningProposalNum);
+      case "2":
+        return setMinVerifNum(winningProposalNum);
+      case "3":
+        return setMinPeriodVerifierPro(winningProposalNum);
+      case "4":
+        setMinPeriodAuthorPro(winningProposalNum);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await getVotingId();
+      console.log("inside useEffect", votingId);
+      displayWinningProposalNum();
+    };
+    fetchData();
+  }, [winningProposalNum, votingId]);
+
   useEffect(() => {
     getPromotionValues();
     readRequestNumbers();
   }, []);
-
-  useEffect(() => {
-    getPromotionValues();
-  }, [winningProposalNum]);
 
   return (
     <>

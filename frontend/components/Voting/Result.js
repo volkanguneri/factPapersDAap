@@ -77,13 +77,11 @@ const Result = () => {
 
   const writeWinningProposalNumToContract = async () => {
     await getVotingId();
-
     switch (votingId) {
       case "0":
         break;
       case "1":
         try {
-          console.log("first one");
           const { request } = await prepareWriteContract({
             address: contractAddress_Voting,
             abi: Voting_Abi,

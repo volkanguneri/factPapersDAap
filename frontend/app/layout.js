@@ -15,9 +15,11 @@ const { chains, publicClient } = configureChains(
   [publicProvider()]
 );
 
+const { WALLETCONNECT_ID } = process.env;
+
 const { connectors } = getDefaultWallets({
   appName: "My RainbowKit App",
-  projectId: process.env.WALLETCONNECT_ID || "48850a402642441a360aaf998ac21039",
+  projectId: WALLETCONNECT_ID,
   chains,
 });
 
@@ -26,8 +28,6 @@ const wagmiConfig = createConfig({
   connectors,
   publicClient,
 });
-
-// || "48850a402642441a360aaf998ac21039"
 
 export default function RootLayout({ children }) {
   return (

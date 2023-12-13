@@ -91,6 +91,16 @@ const Workflow = () => {
     }
   };
 
+  useEffect(() => {
+    readWorkflowStatus();
+
+    const intervalId01 = setInterval(readWorkflowStatus, 5000);
+
+    return () => {
+      clearInterval(intervalId01);
+    };
+  }, []);
+
   const renderWorkflowStatus = () => {
     switch (workflowStatus) {
       case 0:
