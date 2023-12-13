@@ -12,8 +12,8 @@ require("dotenv").config();
 
 const { chains, publicClient } = configureChains(
   [hardhat, sepolia],
-  // [publicProvider()]
-  [alchemyProvider({ apiKey: ALCHEMY_API_KEY }), publicProvider()]
+  [publicProvider()]
+  // [alchemyProvider({ apiKey: ALCHEMY_API_KEY }), publicProvider()]
 );
 
 const { connectors } = getDefaultWallets({
