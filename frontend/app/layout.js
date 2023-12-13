@@ -3,14 +3,19 @@
 import "@rainbow-me/rainbowkit/styles.css";
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { hardhat } from "wagmi/chains";
+import { hardhat, sepolia } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 
 import "./globals.css";
 
 require("dotenv").config();
 
-const { chains, publicClient } = configureChains([hardhat], [publicProvider()]);
+const { chains, publicClient } = configureChains(
+  [hardhat, sepolia],
+  // [publicProvider()]
+  [alchemyProvider({ apiKey: ALCHEMY_API_KEY }), publicProvider()]
+);
+
 const { connectors } = getDefaultWallets({
   appName: "My RainbowKit App",
   projectId: process.env.WALLETCONNECT_ID || "48850a402642441a360aaf998ac21039",
