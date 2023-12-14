@@ -1,9 +1,4 @@
-// export const contractAddress_Dao = "0x4511f8266412874009ef8F13583277651aF47899";
-
 export const contractAddress_Dao = "0x34474917Af433624e542fBB56797deD7473B6bE3";
-
-// export const contractAddress_Voting =
-//   "0x1FD510d66F497996c5C74b64fD576989d8ca4932";
 
 export const contractAddress_Voting =
   "0xc0B5631A2C5830Df0cd4552B2e0672a82f55C6bf";
