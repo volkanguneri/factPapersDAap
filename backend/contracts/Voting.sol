@@ -157,6 +157,8 @@ contract Voting is Ownable, Dao {
 
          uint _winningProposalId;
          bool exaequo = false;
+
+        //  le mieux c'est d'enlever for loop
          
         for (uint i = 0; i < proposals.length; i++) {
             if (proposals[i].voteCount > proposals[_winningProposalId].voteCount) {
@@ -168,19 +170,18 @@ contract Voting is Ownable, Dao {
         }
         if (exaequo) {
             exaequo = false;
-            workflowStatus = WorkflowStatus.NeutralStatus;
-            emit WorkflowStatusChange(WorkflowStatus.VotingSessionOpen, WorkflowStatus.NeutralStatus);
-            revert ExaequoNoWinner();
+            workflowStatus = WorkflowStatus.VotingSessionOpen;
+            emit WorkflowStatusChange(WorkflowStatus.VotingSessionOpen, WorkflowStatus.VotingSessionOpen);
+            /**
+            * @dev write here the code to restart election betxeen exeaquo proposals, if aexequo again choose randomly
+            */
         } else {
-             winningProposalId = _winningProposalId;
-        workflowStatus = WorkflowStatus.VotesTallied;
+            winningProposalId = _winningProposalId;
+            workflowStatus = WorkflowStatus.VotesTallied;
         emit WorkflowStatusChange(WorkflowStatus.VotingSessionOpen, WorkflowStatus.VotesTallied);
         }
-
     }
 
-
-   
     /**
     * @dev Start the process of registering voters. Only the owner can initiate this process.
     * @notice This function transitions the workflow status from NeutralStatus to RegisteringVoters.
